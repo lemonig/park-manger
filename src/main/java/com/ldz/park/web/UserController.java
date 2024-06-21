@@ -1,0 +1,37 @@
+package com.ldz.park.web;
+
+import com.ldz.park.model.SearchForm;
+import com.ldz.park.model.meta.ApiResponse;
+import com.ldz.park.service.UserService;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(value = "/api")
+public class UserController {
+    @Autowired
+    UserService userService;
+
+
+//    @PostMapping(value = "/user/list")
+//    public ApiResponse useList (HttpServletRequest request, @RequestBody SearchForm form){
+//        return userService.getUserList(form);
+//    }
+
+    @PostMapping(value = "user/all")
+    public ApiResponse userAllList (HttpServletRequest request){
+        return userService.getListAll();
+    }
+
+//    @PostMapping(value = "user/add")
+//    public ApiResponse userAdd (HttpServletRequest request,RequestBody ){
+//        return userService.list();
+//    }
+
+
+}
