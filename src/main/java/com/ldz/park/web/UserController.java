@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/api/user")
 public class UserController {
     @Autowired
     UserService userService;
@@ -23,7 +23,7 @@ public class UserController {
 //        return userService.getUserList(form);
 //    }
 
-    @PostMapping(value = "user/all")
+    @PostMapping(value = "/all")
     public ApiResponse userAllList (HttpServletRequest request){
         return userService.getListAll();
     }

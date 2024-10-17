@@ -15,7 +15,7 @@ public class ApiResponse implements Serializable {
     private String request_time = new DateTime().toString();
 
     public ApiResponse(){
-
+    
     }
     public ApiResponse (Object data){
         this.data = data;
