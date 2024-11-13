@@ -25,4 +25,15 @@
             where (account like #{pattern} or name like#{pattern} )
         </if>
     </select>
+
+
+
+    <select id="getUserByAccount" resultMap="BaseResultMap">
+        select * from user where account = #{0}
+    </select>
+
+
+    <insert id="insertToken">
+        insert into user_login (user_id, token) values (#{userId}, #{token})
+    </insert>
 </mapper>
