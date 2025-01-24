@@ -31,4 +31,8 @@
         delete from carport where id = #{param1}
     </delete>
 
+    <select id="detail" resultMap="BaseResultMap">
+        select * from carport where id = #{id}
+    </select>
+
 </mapper>

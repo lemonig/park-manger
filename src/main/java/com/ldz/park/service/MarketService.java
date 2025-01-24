@@ -1,8 +1,10 @@
 package com.ldz.park.service;
 
+import com.github.pagehelper.PageInfo;
 import com.ldz.park.dao.MarketMapper;
 import com.ldz.park.model.Market;
 import com.ldz.park.model.meta.ApiResponse;
+import com.ldz.park.util.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +17,10 @@ public class MarketService {
 
     public ApiResponse list (){
         List<Market> list = marketMapper.list();
-        System.out.println(list);
-        return new ApiResponse(list);
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(list);
+        apiResponse.setAdditional_data(PaginationUtil.getTotal(new PageInfo<>(list)));
+        return apiResponse;
     }
 
     public void add (Market market){

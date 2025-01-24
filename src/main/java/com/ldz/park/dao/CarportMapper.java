@@ -13,4 +13,5 @@ public interface CarportMapper {
     void add(@Param("carport") Carport carport);
     void update(@Param("carport") Carport carport);
     void delete(Integer id);
+    Carport detail(@Param("id") Integer id);
 }

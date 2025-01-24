@@ -18,13 +18,16 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-//    public ApiResponse getUserList(SearchForm form){
-//        ApiResponse apiResponse= new ApiResponse();
-//        List<User> list= userMapper.getUserList(form);
-//        apiResponse.setData(list);
-//        return apiResponse;
-//    }
+    public List<User> list() {
+        return userMapper.getListAll();
+    }
 
+    // public ApiResponse getUserList(SearchForm form){
+    // ApiResponse apiResponse= new ApiResponse();
+    // List<User> list= userMapper.getUserList(form);
+    // apiResponse.setData(list);
+    // return apiResponse;
+    // }
 
     public SimpleUser login(String account) {
         User user = userMapper.getUserByAccount(account);
@@ -38,18 +41,16 @@ public class UserService {
         return getUserLoginResponse(user);
     }
 
-    private SimpleUser getUserLoginResponse(User user){
+    private SimpleUser getUserLoginResponse(User user) {
         String token = TokenHelper.getGUID();
-        userMapper.insertToken(user.getId(),token);
+        userMapper.insertToken(user.getId(), token);
         return new SimpleUser().fromUser(user, token);
     }
-    
 
-    public ApiResponse getListAll(){
+    public ApiResponse getListAll() {
         List<User> list = userMapper.getListAll();
         System.out.println(list);
         return new ApiResponse(list);
     }
-
 
 }

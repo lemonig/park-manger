@@ -28,4 +28,9 @@ public class CarportService {
     public void delete(Integer id) {
         carportMapper.delete(id);
     }
+
+    public ApiResponse detail(Integer id){
+       Carport carport =   carportMapper.detail(id);
+       return new ApiResponse(carport);
+    }
 }
