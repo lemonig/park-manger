@@ -53,4 +53,7 @@ public class UserService {
         return new ApiResponse(list);
     }
 
+    public void deleteFailUser(String user_name) {
+        userMapper.deleteFailUser(user_name);
+    }
 }

@@ -18,7 +18,7 @@ public class UserLoginValidator {
     @Autowired
     UserService userService;
 
-    public void validate(Object target) {
+    public String validate(Object target) {
         LoginForm loginForm = (LoginForm) target;
         if (loginForm.getAccount() == null || loginForm.getPassword() == null ||
                 loginForm.getAccount().trim().length() == 0 ||
@@ -40,10 +40,12 @@ public class UserLoginValidator {
             /** 匹配成功则返回 */
             if (account.equals(loginForm.getAccount()) && password.equals(loginForm.getPassword())) {
                 loginForm.setAccount(user.getAccount());
-                userService.deleteFailUser(loginForm.getAccount());
+//                userService.deleteFailUser(loginForm.getAccount());
                 return null;
             }
         }
+        // 添加默认返回值，表示验证失败
+        throw new ServerException(ErrorCode.FIELD_ERROR.getCode(), "用户名或密码错误");
     }
 
 }
