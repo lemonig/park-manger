@@ -6,21 +6,23 @@ import com.qcloud.cos.auth.BasicCOSCredentials;
 import com.qcloud.cos.auth.COSCredentials;
 import com.qcloud.cos.region.Region;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Bean;
 
 @Configuration
-@RequiredArgsConstructor  //自动为所有 final 字段生成构造函数  自动注入 CosProperties
+@ConfigurationProperties(prefix = "tencent.cos")
+@Data
 public class CosConfig {
+    private String secretId = "AKID86sQksnUxEH7j7IFyTlpfHfpmXFjz2rf";
+    private String secretKey = "hBRTItGPRGuNdiZCbnlV4QZUBf0GbIp9";
+    private String region;
+    private String bucketName;
+    private String prefix;
 
-    private final CosProperties cosProperties;
-
-    @Bean
     public COSClient cosClient() {
-        COSCredentials credentials = new BasicCOSCredentials(cosProperties.getSecretId(), cosProperties.getSecretKey());
-        ClientConfig clientConfig = new ClientConfig(new Region(cosProperties.getRegion()));
-        return new COSClient(credentials, clientConfig);
+        COSCredentials cred = new BasicCOSCredentials(secretId, secretKey);
+        ClientConfig clientConfig = new ClientConfig(new Region(region));
+        return new COSClient(cred, clientConfig);
     }
-
 }

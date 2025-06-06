@@ -1,9 +1,10 @@
 package com.ldz.park.service;
 
-import com.ldz.park.config.CosProperties;
+import com.ldz.park.config.CosConfig;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.model.ObjectMetadata;
 import com.qcloud.cos.model.PutObjectRequest;
+import com.qcloud.cos.model.PutObjectResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,27 +15,26 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class CosService {
-
-    private final COSClient cosClient;
-    private final CosProperties cosProperties;
+    private final CosConfig config;
 
     public String uploadFile(MultipartFile file) throws IOException {
-        String key = "upload/" + UUID.randomUUID() + "-" + file.getOriginalFilename();
+        String key = config.getPrefix() + UUID.randomUUID() + "-" + file.getOriginalFilename();
+
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
 
         PutObjectRequest request = new PutObjectRequest(
-                cosProperties.getBucket(),
+                config.getBucketName(),
                 key,
                 file.getInputStream(),
                 metadata
         );
-        cosClient.putObject(request);
 
-        return cosProperties.getBaseUrl() + "/" + key;
+        PutObjectResult putObjectResult = config.cosClient().putObject(request);
+        return "https://" + config.getBucketName() + ".cos." + config.getRegion() + ".myqcloud.com/" + key;
     }
 
     public void deleteFile(String key) {
-        cosClient.deleteObject(cosProperties.getBucket(), key);
+        config.cosClient().deleteObject(config.getBucketName(), key);
     }
 }
