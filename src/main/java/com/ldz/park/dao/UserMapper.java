@@ -16,4 +16,6 @@ public interface UserMapper {
     void insertToken(@Param("userId") Integer userId, @Param("token") String token);
 
     void deleteFailUser(@Param("user_name") String user_name);
+
+    Integer getUserIdByToken(String token);
 }

@@ -36,4 +36,11 @@
     <insert id="insertToken">
         insert into user_login (user_id, token) values (#{userId}, #{token})
     </insert>
+    <update id="clearToken">
+        update user_login set token=uuid() where user_id=#{0}
+    </update>
+
+    <select id="getUserIdByToken" resultType="java.lang.Integer">
+        select user_id from user_login where token = #{0}
+    </select>
 </mapper>

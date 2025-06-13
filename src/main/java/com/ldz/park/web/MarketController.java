@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/market")
 public class MarketController {
@@ -25,6 +29,17 @@ public class MarketController {
 
     @PostMapping(value = "/add")
     public ApiResponse marketAdd(HttpServletRequest request, @RequestBody Market market){
+        String code = UUID.randomUUID().toString();
+        market.setCode(code);
+
+        List<Map<String, Object>> images = market.getPhoto();
+        images.forEach(image -> {
+            String id = (String) image.get("id");
+
+            marketService.insetImg(code, id, );
+        });
+
+
         marketService.add(market);
         return new ApiResponse();
     }

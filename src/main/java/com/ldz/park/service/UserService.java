@@ -56,4 +56,9 @@ public class UserService {
     public void deleteFailUser(String user_name) {
         userMapper.deleteFailUser(user_name);
     }
+
+
+    public Integer getUserIdByToken(String token) {
+        return userMapper.getUserIdByToken(token);
+    }
 }

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ldz.park.dao.FileRecordMapper">
+
+    <!-- 通用 ResultMap -->
+    <resultMap id="BaseResultMap" type="com.ldz.park.entity.FileRecord">
+        <id column="id" property="id"/>
+        <result column="url" property="url"/>
+        <result column="size" property="size"/>
+        <result column="filename" property="filename"/>
+        <result column="original_filename" property="originalFilename"/>
+        <result column="base_path" property="basePath"/>
+        <result column="path" property="path"/>
+        <result column="ext" property="ext"/>
+        <result column="content_type" property="contentType"/>
+        <result column="platform" property="platform"/>
+        <result column="th_url" property="thUrl"/>
+        <result column="th_filename" property="thFilename"/>
+        <result column="th_size" property="thSize"/>
+        <result column="th_content_type" property="thContentType"/>
+        <result column="object_id" property="objectId"/>
+        <result column="object_type" property="objectType"/>
+        <result column="attr" property="attr"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+    </resultMap>
+
+
+    <!-- 根据 ID 查询 -->
+    <select id="selectById" parameterType="String" resultMap="BaseResultMap">
+        SELECT * FROM market_images WHERE id = #{id}
+    </select>
+
+    <!-- 插入 -->
+    <insert id="insert" parameterType="com.ldz.park.entity.FileRecord">
+        INSERT INTO market_images (
+            id, url, size, filename, original_filename, base_path, path, ext,
+            content_type, platform, th_url, th_filename, th_size, th_content_type,
+            object_id, object_type, attr, create_time, create_by, update_time, update_by
+        ) VALUES (
+                     #{id}, #{url}, #{size}, #{filename}, #{originalFilename}, #{basePath}, #{path}, #{ext},
+                     #{contentType}, #{platform}, #{thUrl}, #{thFilename}, #{thSize}, #{thContentType},
+                     #{objectId}, #{objectType}, #{attr}, #{createTime}, #{createBy}, #{updateTime}, #{updateBy}
+                 )
+    </insert>
+
+    <!-- 更新 -->
+    <update id="updateById" parameterType="com.ldz.park.entity.FileRecord">
+        UPDATE market_images
+        SET
+            url = #{url},
+            size = #{size},
+            filename = #{filename},
+            original_filename = #{originalFilename},
+            base_path = #{basePath},
+            path = #{path},
+            ext = #{ext},
+            content_type = #{contentType},
+            platform = #{platform},
+            th_url = #{thUrl},
+            th_filename = #{thFilename},
+            th_size = #{thSize},
+            th_content_type = #{thContentType},
+            object_id = #{objectId},
+            object_type = #{objectType},
+            attr = #{attr},
+            create_time = #{createTime},
+            create_by = #{createBy},
+            update_time = #{updateTime},
+            update_by = #{updateBy}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteById" parameterType="String">
+        DELETE FROM market_images WHERE id = #{id}
+    </delete>
+
+</mapper>
