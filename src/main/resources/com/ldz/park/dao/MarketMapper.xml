@@ -17,8 +17,8 @@
     </select>
 
     <insert id="add">
-        insert into market(code,owner_id,price,number,photo,description,type,gmt_create)
-            value(#{code},#{market.ownerId},#{market.price},#{market.number},#{market.description},#{market.type},now())
+        insert into market(code,owner_id,price,number,description,type,gmt_create,gmt_modify)
+            value(#{market.code},#{market.ownerId},#{market.price},#{market.number},#{market.description},#{market.type},now(),now())
     </insert>
 
 

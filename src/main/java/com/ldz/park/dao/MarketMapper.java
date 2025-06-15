@@ -1,6 +1,7 @@
 package com.ldz.park.dao;
 
 import com.ldz.park.model.Market;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -16,7 +17,11 @@ public interface MarketMapper {
     void delete(Integer id);
 
     //    insert image
-    @Select("insert into market_images (market_code, image_id, create_by) values (#{market_id}, #{create_by}, #{create_by})")
-    Void insetImg(@Param("market_code") String market_code, @Param("image_id") String image_id , @Param("create_by") Integer create_by);
+// insert image
+    @Insert("insert into market_images (market_code, image_id, create_by) values (#{market_code}, #{image_id}, #{create_by})")
+    int insertImg(@Param("market_code") String market_code,
+                  @Param("image_id") String image_id,
+                  @Param("create_by") Integer create_by);
+
 
 }

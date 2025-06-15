@@ -40,8 +40,8 @@ public class MarketService {
         marketMapper.delete(id);
     }
 
-    private void insetImg(String marketCode,String image_id, Integer  userId){
-        marketMapper.insetImg(marketCode,image_id,userId );
+    public void insertImg(String marketCode,String image_id, Integer  userId){
+        marketMapper.insertImg(marketCode,image_id,userId );
     }
 
 }

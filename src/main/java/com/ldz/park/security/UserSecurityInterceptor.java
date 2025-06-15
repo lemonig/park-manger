@@ -1,12 +1,14 @@
 package com.ldz.park.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ldz.park.model.meta.ApiErrorResponse;
+import com.ldz.park.model.meta.ErrorCode;
 import com.ldz.park.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 
 @Component
@@ -15,33 +17,23 @@ public class UserSecurityInterceptor implements  HandlerInterceptor {
     @Autowired
     UserService userService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
+
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String token = request.getHeader("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7); // 去掉 "Bearer " 前缀
-            try {
-                String username = JwtUtil.validateToken(token);
-                if (!JwtUtil.isTokenExpired(token)) {
-                    // Token 有效，可以将用户信息存入上下文（可选）
-                    request.setAttribute("username", username);
-                    return true;
-                } else {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("Token expired");
-                    return false;
-                }
-            } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid token");
-                return false;
-            }
+        String token = request.getHeader("token");
+        if(isUserAuthenticated(token)){
+            return true;
+        }else {
+            response.setHeader("content-type", "application/json; charset=utf-8");
+            PrintWriter out = response.getWriter();
+            ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
+            apiErrorResponse.setError(ErrorCode.UNAUTHENTICATED.getCode());
+            apiErrorResponse.setMessage("用户未认证或token过期，请重新登录后继续");
+            apiErrorResponse.setPath(request.getServletPath());
+            String errorMsg = new ObjectMapper().writeValueAsString(apiErrorResponse);
+            out.write(errorMsg);
+            return false;
         }
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("Missing or invalid Authorization header");
-        return false;
     }
 
     /**
@@ -60,10 +52,10 @@ public class UserSecurityInterceptor implements  HandlerInterceptor {
             return false;
         }
 
-        User user = userService.getUserById(userId);
-        if (!user.getIsActive()) {
-            return false;
-        }
+//        User user = userService.getUserById(userId);
+//        if (!user.getIsActive()) {
+//            return false;
+//        }
         return true;
     }
 

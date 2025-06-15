@@ -33,12 +33,12 @@
 
     <!-- 根据 ID 查询 -->
     <select id="selectById" parameterType="String" resultMap="BaseResultMap">
-        SELECT * FROM market_images WHERE id = #{id}
+        SELECT * FROM images WHERE id = #{id}
     </select>
 
     <!-- 插入 -->
     <insert id="insert" parameterType="com.ldz.park.entity.FileRecord">
-        INSERT INTO market_images (
+        INSERT INTO images (
             id, url, size, filename, original_filename, base_path, path, ext,
             content_type, platform, th_url, th_filename, th_size, th_content_type,
             object_id, object_type, attr, create_time, create_by, update_time, update_by
@@ -51,7 +51,7 @@
 
     <!-- 更新 -->
     <update id="updateById" parameterType="com.ldz.park.entity.FileRecord">
-        UPDATE market_images
+        UPDATE images
         SET
             url = #{url},
             size = #{size},
@@ -78,7 +78,7 @@
 
     <!-- 删除 -->
     <delete id="deleteById" parameterType="String">
-        DELETE FROM market_images WHERE id = #{id}
+        DELETE FROM images WHERE id = #{id}
     </delete>
 
 </mapper>

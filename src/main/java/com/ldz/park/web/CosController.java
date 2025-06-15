@@ -26,11 +26,13 @@ public class CosController {
     public ApiResponse upload(@RequestParam MultipartFile file) throws IOException {
         String fileId = UUID.randomUUID().toString();
         ApiResponse apiResponse = new ApiResponse();
+
         String url = cosService.uploadFile(file);
         String originalFilename = file.getOriginalFilename(); // 原始文件名（例如 "image.jpg"）
         Long size = file.getSize();             // 文件大小（单位：字节）
         String contentType  = file.getContentType();      // MIME 类型（例如 "image/png"）
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+
         FileRecord fileRecord = new FileRecord();
         fileRecord.setId(fileId);
         fileRecord.setUrl(url);

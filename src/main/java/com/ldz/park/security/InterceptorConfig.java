@@ -17,6 +17,8 @@ public class InterceptorConfig implements  WebMvcConfigurer  {
         registry.addInterceptor(userSecurityInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
+                        "/api/login",
+                        "/api/register",
                         "/api/sso",
                         "/favicon.ico",
                         "/lib/**",
