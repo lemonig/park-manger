@@ -1,6 +1,7 @@
 package com.ldz.park.dao;
 
 import com.ldz.park.model.Market;
+import com.ldz.park.model.vo.market.SimpleImage;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -23,5 +24,5 @@ public interface MarketMapper {
                   @Param("image_id") String image_id,
                   @Param("create_by") Integer create_by);
 
-
+    List<SimpleImage> selectImagesByMarketCode(@Param("marketCode") String marketCode);
 }

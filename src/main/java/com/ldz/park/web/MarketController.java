@@ -3,6 +3,7 @@ package com.ldz.park.web;
 import com.ldz.park.model.Market;
 import com.ldz.park.model.meta.ApiErrorResponse;
 import com.ldz.park.model.meta.ApiResponse;
+import com.ldz.park.model.vo.market.SimpleImage;
 import com.ldz.park.service.MarketService;
 import com.ldz.park.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,11 +62,11 @@ public class MarketController {
         market.setGmtModify(LocalDateTime.now());
 
         // 获取图片列表，校验是否为空
-        List<Map<String, String>> images = market.getPhoto();
+        List<SimpleImage> images = market.getImages();
         if (images != null && !images.isEmpty()) {
-            for (Map<String, String> image : images) {
-                String id = image.get("id");
-                String url = image.get("url");
+            for (SimpleImage image : images) {
+                String id = image.getId();
+                String url = image.getUrl();
                 marketService.insertImg(code, id, userId);
             }
         }

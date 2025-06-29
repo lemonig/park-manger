@@ -1,5 +1,6 @@
 package com.ldz.park.model;
 
+import com.ldz.park.model.vo.market.SimpleImage;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -20,7 +21,7 @@ public class Market {
     private String description;
 
     // 防止 photo 为空的写法
-    private List<Map<String, String>> photo = new ArrayList<>();
+    private List<SimpleImage> images;
 
     //    private String photos;
     private String imageId;

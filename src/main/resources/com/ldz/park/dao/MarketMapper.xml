@@ -36,4 +36,13 @@
     <delete id="delete">
         delete from market where id = #{param1}
     </delete>
+
+    <!-- 根据 market_code 查询图片列表 -->
+    <select id="selectImagesByMarketCode" resultType="com.ldz.park.model.vo.market.SimpleImage">
+        SELECT i.id, i.url
+        FROM images i
+                 JOIN market_images mi ON i.id = mi.image_id
+        WHERE mi.market_code = #{marketCode}
+    </select>
+
 </mapper>

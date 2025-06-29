@@ -5,6 +5,7 @@ import com.ldz.park.dao.MarketMapper;
 import com.ldz.park.entity.FileRecord;
 import com.ldz.park.model.Market;
 import com.ldz.park.model.meta.ApiResponse;
+import com.ldz.park.model.vo.market.SimpleImage;
 import com.ldz.park.util.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,12 @@ public class MarketService {
 
     public ApiResponse list (){
         List<Market> list = marketMapper.list();
+        for (Market m : list) {
+            List<SimpleImage> imgs = marketMapper.selectImagesByMarketCode(m.getCode());
+            m.setImages(imgs);
+        }
+
+
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setData(list);
         apiResponse.setAdditional_data(PaginationUtil.getTotal(new PageInfo<>(list)));
@@ -44,4 +51,7 @@ public class MarketService {
         marketMapper.insertImg(marketCode,image_id,userId );
     }
 
+    public List<SimpleImage> getImagesByMarketCode(String marketCode) {
+        return marketMapper.selectImagesByMarketCode(marketCode);
+    }
 }
