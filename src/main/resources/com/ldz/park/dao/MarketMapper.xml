@@ -45,4 +45,8 @@
         WHERE mi.market_code = #{marketCode}
     </select>
 
+    <select id="getDetailById" resultType="com.ldz.park.model.Market">
+        select * from market where id = #{id}
+    </select>
+
 </mapper>

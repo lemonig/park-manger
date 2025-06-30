@@ -47,6 +47,13 @@ public class MarketService {
         marketMapper.delete(id);
     }
 
+    public ApiResponse detail(Integer id){
+        marketMapper.getDetailById(id);
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(marketMapper.getDetailById(id));
+        return apiResponse;
+    }
+
     public void insertImg(String marketCode,String image_id, Integer  userId){
         marketMapper.insertImg(marketCode,image_id,userId );
     }

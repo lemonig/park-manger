@@ -1,11 +1,13 @@
 package com.ldz.park.web;
 
+import com.ldz.park.model.Carport;
 import com.ldz.park.model.Market;
 import com.ldz.park.model.meta.ApiErrorResponse;
 import com.ldz.park.model.meta.ApiResponse;
 import com.ldz.park.model.vo.market.SimpleImage;
 import com.ldz.park.service.MarketService;
 import com.ldz.park.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +92,10 @@ public class MarketController {
         return new ApiResponse();
     }
 
-
+    @Operation(summary = "获取车位详情")
+    @PostMapping(value = "/detail")
+    public ApiResponse detail(@RequestBody Market market) {
+        return marketService.detail(market.getId());
+    }
 
 }

@@ -16,6 +16,7 @@ public interface MarketMapper {
     void add(@Param("market") Market market);
     void update(@Param("market") Market market);
     void delete(Integer id);
+    Market getDetailById(Integer id);
 
     //    insert image
 // insert image
