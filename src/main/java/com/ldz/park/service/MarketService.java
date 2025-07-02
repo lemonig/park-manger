@@ -48,9 +48,11 @@ public class MarketService {
     }
 
     public ApiResponse detail(Integer id){
-        marketMapper.getDetailById(id);
+        Market market = marketMapper.getDetailById(id);
+        List<SimpleImage> imgs = marketMapper.selectImagesByMarketCode(market.getCode());
+        market.setImages(imgs);
         ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setData(marketMapper.getDetailById(id));
+        apiResponse.setData(market);
         return apiResponse;
     }
 
