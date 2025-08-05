@@ -75,7 +75,7 @@ public class MarketController {
 
         // 添加 market 数据
         marketService.add(market);
-        return new ApiResponse("Market added successfully");
+        return new ApiResponse("添加成功");
     }
 
 

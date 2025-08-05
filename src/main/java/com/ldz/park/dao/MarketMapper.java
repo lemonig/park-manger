@@ -18,7 +18,6 @@ public interface MarketMapper {
     void delete(Integer id);
     Market getDetailById(Integer id);
 
-    //    insert image
 // insert image
     @Insert("insert into market_images (market_code, image_id, create_by) values (#{market_code}, #{image_id}, #{create_by})")
     int insertImg(@Param("market_code") String market_code,

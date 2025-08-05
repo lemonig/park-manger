@@ -24,8 +24,8 @@ public class MarketService {
     public ApiResponse list (){
         List<Market> list = marketMapper.list();
         for (Market m : list) {
-            List<SimpleImage> imgs = marketMapper.selectImagesByMarketCode(m.getCode());
-            m.setImages(imgs);
+            List<SimpleImage> image = marketMapper.selectImagesByMarketCode(m.getCode());
+            m.setImages(image);
         }
 
 
