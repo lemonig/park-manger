@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ldz.park.dao.DictTypeMapper">
+    <resultMap id="BaseResultMap" type="com.ldz.park.model.DictType">
+        <result column="id" property="id" jdbcType="BIGINT"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="list" resultMap="BaseResultMap">
+        select * from dict_type
+        order by create_time desc, id desc
+    </select>
+
+    <select id="detail" resultMap="BaseResultMap">
+        select * from dict_type where id = #{id}
+    </select>
+
+    <insert id="add">
+        insert into dict_type(code, name, description, status, create_time, update_time)
+        values (#{dictType.code}, #{dictType.name}, #{dictType.description}, #{dictType.status}, now(), now())
+    </insert>
+
+    <update id="update">
+        update dict_type
+        set code = #{dictType.code},
+            name = #{dictType.name},
+            description = #{dictType.description},
+            status = #{dictType.status},
+            update_time = now()
+        where id = #{dictType.id}
+    </update>
+
+    <delete id="delete">
+        delete from dict_type where id = #{id}
+    </delete>
+</mapper>
+

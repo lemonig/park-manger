@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ldz.park.dao.DictItemMapper">
+    <resultMap id="BaseResultMap" type="com.ldz.park.model.DictItem">
+        <result column="id" property="id" jdbcType="BIGINT"/>
+        <result column="type_code" property="typeCode" jdbcType="VARCHAR"/>
+        <result column="label" property="label" jdbcType="VARCHAR"/>
+        <result column="value" property="value" jdbcType="VARCHAR"/>
+        <result column="sort" property="sort" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="list" resultMap="BaseResultMap">
+        select * from dict_item
+        <where>
+            <if test="typeCode != null and typeCode != ''">
+                and type_code = #{typeCode}
+            </if>
+        </where>
+        order by sort asc, id asc
+    </select>
+
+    <select id="detail" resultMap="BaseResultMap">
+        select * from dict_item where id = #{id}
+    </select>
+
+    <insert id="add">
+        insert into dict_item(type_code, label, value, sort, status, create_time, update_time)
+        values (#{dictItem.typeCode}, #{dictItem.label}, #{dictItem.value}, #{dictItem.sort}, #{dictItem.status}, now(), now())
+    </insert>
+
+    <update id="update">
+        update dict_item
+        set type_code = #{dictItem.typeCode},
+            label = #{dictItem.label},
+            value = #{dictItem.value},
+            sort = #{dictItem.sort},
+            status = #{dictItem.status},
+            update_time = now()
+        where id = #{dictItem.id}
+    </update>
+
+    <delete id="delete">
+        delete from dict_item where id = #{id}
+    </delete>
+
+    <delete id="deleteByTypeCode">
+        delete from dict_item where type_code = #{typeCode}
+    </delete>
+</mapper>
+
