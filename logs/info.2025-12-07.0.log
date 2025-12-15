@@ -1,0 +1,45 @@
+2025-12-07 19:16:46.173 [restartedMain] INFO  com.ldz.park.ParkApplication - Starting ParkApplication using Java 21.0.7 with PID 11049 (/Volumes/jonny/project/park-manger/target/classes started by jonny in /Volumes/jonny/project/park-manger)
+2025-12-07 19:16:46.174 [restartedMain] INFO  com.ldz.park.ParkApplication - The following 1 profile is active: "dev"
+2025-12-07 19:16:46.190 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-07 19:16:46.190 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-12-07 19:16:46.494 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-07 19:16:46.495 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-12-07 19:16:46.507 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 6 ms. Found 0 Redis repository interfaces.
+2025-12-07 19:16:46.847 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 3429 (http)
+2025-12-07 19:16:46.851 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-3429"]
+2025-12-07 19:16:46.851 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-07 19:16:46.851 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-12-07 19:16:46.869 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-12-07 19:16:46.869 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 679 ms
+2025-12-07 19:16:46.897 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Starting...
+2025-12-07 19:16:47.415 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - ServerHikariCP - Added connection com.mysql.cj.jdbc.ConnectionImpl@2bf74ebc
+2025-12-07 19:16:47.417 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Start completed.
+2025-12-07 19:16:47.867 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-12-07 19:16:47.873 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-3429"]
+2025-12-07 19:16:47.879 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 3429 (http) with context path ''
+2025-12-07 19:16:47.883 [restartedMain] INFO  com.ldz.park.ParkApplication - Started ParkApplication in 1.855 seconds (process running for 7.268)
+2025-12-07 19:20:18.510 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown initiated...
+2025-12-07 19:20:18.511 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown completed.
+2025-12-07 19:20:24.695 [restartedMain] INFO  com.ldz.park.ParkApplication - Starting ParkApplication using Java 21.0.7 with PID 11103 (/Volumes/jonny/project/park-manger/target/classes started by jonny in /Volumes/jonny/project/park-manger)
+2025-12-07 19:20:24.696 [restartedMain] INFO  com.ldz.park.ParkApplication - The following 1 profile is active: "dev"
+2025-12-07 19:20:24.711 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-07 19:20:24.711 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-12-07 19:20:24.981 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-07 19:20:24.982 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-12-07 19:20:24.992 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 5 ms. Found 0 Redis repository interfaces.
+2025-12-07 19:20:25.286 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 3429 (http)
+2025-12-07 19:20:25.291 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-3429"]
+2025-12-07 19:20:25.292 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-07 19:20:25.292 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-12-07 19:20:25.313 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-12-07 19:20:25.313 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 602 ms
+2025-12-07 19:20:25.341 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Starting...
+2025-12-07 19:20:25.982 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - ServerHikariCP - Added connection com.mysql.cj.jdbc.ConnectionImpl@10a0c8d
+2025-12-07 19:20:25.985 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Start completed.
+2025-12-07 19:20:26.410 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-12-07 19:20:26.417 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-3429"]
+2025-12-07 19:20:26.422 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 3429 (http) with context path ''
+2025-12-07 19:20:26.427 [restartedMain] INFO  com.ldz.park.ParkApplication - Started ParkApplication in 1.864 seconds (process running for 7.241)
+2025-12-07 19:24:21.753 [http-nio-3429-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-07 19:24:21.753 [http-nio-3429-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-12-07 19:24:21.755 [http-nio-3429-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms

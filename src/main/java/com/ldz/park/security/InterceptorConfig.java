@@ -22,8 +22,8 @@ public class InterceptorConfig implements  WebMvcConfigurer  {
                 .excludePathPatterns(
                         "/api/login",
                         "/api/register",
-                        "/api/sso",
                         "/favicon.ico",
+
                         "/lib/**",
                         "/api/sso/**",
                         // swagger / openapi
@@ -33,6 +33,7 @@ public class InterceptorConfig implements  WebMvcConfigurer  {
                         "/v3/api-docs/**",
                         "/swagger-resources/**",
                         "/webjars/**"
+
                 );
 
     }

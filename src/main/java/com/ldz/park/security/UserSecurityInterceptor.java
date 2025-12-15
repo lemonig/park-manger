@@ -17,8 +17,6 @@ public class UserSecurityInterceptor implements  HandlerInterceptor {
     @Autowired
     UserService userService;
 
-
-
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("token");
         if(isUserAuthenticated(token)){

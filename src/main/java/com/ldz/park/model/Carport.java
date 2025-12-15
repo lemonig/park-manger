@@ -16,5 +16,5 @@ public class Carport {
     private Integer number;
 
     private String description;
-    private List<String> photo;
+private List<String> photo;
 }
