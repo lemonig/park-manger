@@ -177,6 +177,13 @@
             <artifactId>jjwt</artifactId>
             <version>0.12.6</version>
         </dependency>
+
+<!--解决 LocalDateTime 不支持问题-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

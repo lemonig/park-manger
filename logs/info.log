@@ -1,2 +1,28 @@
-2025-12-19 09:00:04.933 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown initiated...
-2025-12-19 09:00:04.943 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown completed.
+2025-12-31 13:31:07.660 [restartedMain] INFO  com.ldz.park.ParkApplication - Starting ParkApplication using Java 21.0.2 with PID 15748 (G:\个人项目\2023年\park\target\classes started by Administrator in G:\个人项目\2023年\park)
+2025-12-31 13:31:07.685 [restartedMain] INFO  com.ldz.park.ParkApplication - The following 1 profile is active: "dev"
+2025-12-31 13:31:07.905 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-31 13:31:07.906 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-12-31 13:31:11.013 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-31 13:31:11.021 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-12-31 13:31:11.097 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 47 ms. Found 0 Redis repository interfaces.
+2025-12-31 13:31:14.908 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 3429 (http)
+2025-12-31 13:31:14.923 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-3429"]
+2025-12-31 13:31:14.927 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-31 13:31:14.928 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-12-31 13:31:15.649 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-12-31 13:31:15.649 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 7741 ms
+2025-12-31 13:31:16.293 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Starting...
+2025-12-31 13:31:17.096 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - ServerHikariCP - Added connection com.mysql.cj.jdbc.ConnectionImpl@12bafc02
+2025-12-31 13:31:17.099 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Start completed.
+2025-12-31 13:31:21.987 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-12-31 13:31:22.032 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-3429"]
+2025-12-31 13:31:22.098 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 3429 (http) with context path ''
+2025-12-31 13:31:22.118 [restartedMain] INFO  com.ldz.park.ParkApplication - Started ParkApplication in 16.441 seconds (process running for 20.531)
+2025-12-31 13:36:30.304 [http-nio-3429-exec-1] INFO  o.a.tomcat.util.http.parser.Cookie - A cookie header was received [Hm_lvt_b9f73d323b843af63cced04c171a5913=1765440479,1765501012,1766054205,1766368958] that contained an invalid cookie. That cookie will be ignored.
+ Note: further occurrences of this error will be logged at DEBUG level.
+2025-12-31 13:36:30.373 [http-nio-3429-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-31 13:36:30.375 [http-nio-3429-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-12-31 13:36:30.390 [http-nio-3429-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 8 ms
+2025-12-31 13:51:25.999 [SpringApplicationShutdownHook] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-3429"]
+2025-12-31 13:51:26.173 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown initiated...
+2025-12-31 13:51:26.252 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown completed.

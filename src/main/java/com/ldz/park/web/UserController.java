@@ -27,7 +27,7 @@ public class UserController {
     @PostMapping("/login")
     public ApiResponse login(@RequestBody LoginForm loginForm){
         userLoginValidator.validate(loginForm);
-        return new ApiResponse(userService.login(loginForm.getAccount()));
+        return  ApiResponse.success(userService.login(loginForm.getAccount()));
 
     }
 

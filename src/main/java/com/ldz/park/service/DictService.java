@@ -4,29 +4,26 @@ import com.ldz.park.dao.DictItemMapper;
 import com.ldz.park.dao.DictTypeMapper;
 import com.ldz.park.model.DictItem;
 import com.ldz.park.model.DictType;
-import com.ldz.park.model.meta.ApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DictService {
 
-    @Autowired
-    private DictTypeMapper dictTypeMapper;
+    private final DictTypeMapper dictTypeMapper;
+    private final DictItemMapper dictItemMapper;
 
-    @Autowired
-    private DictItemMapper dictItemMapper;
+    /* ===================== 字典类型 ===================== */
 
-    public ApiResponse listTypes() {
-        List<DictType> list = dictTypeMapper.list();
-        return new ApiResponse(list);
+    public List<DictType> listTypes() {
+        return dictTypeMapper.list();
     }
 
-    public ApiResponse typeDetail(Long id) {
-        DictType detail = dictTypeMapper.detail(id);
-        return new ApiResponse(detail);
+    public DictType typeDetail(Long id) {
+        return dictTypeMapper.detail(id);
     }
 
     public void addType(DictType dictType) {
@@ -37,6 +34,9 @@ public class DictService {
         dictTypeMapper.update(dictType);
     }
 
+    /**
+     * 删除字典类型时，同时删除该类型下所有字典项
+     */
     public void deleteType(Long id) {
         DictType type = dictTypeMapper.detail(id);
         if (type != null && type.getCode() != null) {
@@ -45,14 +45,14 @@ public class DictService {
         dictTypeMapper.delete(id);
     }
 
-    public ApiResponse listItems(String typeCode) {
-        List<DictItem> list = dictItemMapper.list(typeCode);
-        return new ApiResponse(list);
+    /* ===================== 字典项 ===================== */
+
+    public List<DictItem> listItems(String typeCode) {
+        return dictItemMapper.list(typeCode);
     }
 
-    public ApiResponse itemDetail(Long id) {
-        DictItem detail = dictItemMapper.detail(id);
-        return new ApiResponse(detail);
+    public DictItem itemDetail(Long id) {
+        return dictItemMapper.detail(id);
     }
 
     public void addItem(DictItem dictItem) {
@@ -67,4 +67,3 @@ public class DictService {
         dictItemMapper.delete(id);
     }
 }
-

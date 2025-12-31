@@ -50,7 +50,7 @@ public class UserService {
     public ApiResponse getListAll() {
         List<User> list = userMapper.getListAll();
         System.out.println(list);
-        return new ApiResponse(list);
+        return  ApiResponse.success(list);
     }
 
     public void deleteFailUser(String user_name) {

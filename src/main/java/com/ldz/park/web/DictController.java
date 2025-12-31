@@ -6,85 +6,87 @@ import com.ldz.park.model.meta.ApiResponse;
 import com.ldz.park.service.DictService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "字典管理", description = "字典类型与字典项接口")
 @RestController
 @RequestMapping("/api/dict")
+@RequiredArgsConstructor
 public class DictController {
 
-    @Autowired
-    private DictService dictService;
+    private final DictService dictService;
+
+    /* ===================== 字典类型 ===================== */
 
     @Operation(summary = "字典类型列表")
     @PostMapping("/type/list")
-    public ApiResponse typeList() {
-        return dictService.listTypes();
+    public ApiResponse<List<DictType>> listTypes() {
+        return ApiResponse.success(dictService.listTypes());
     }
-
     @Operation(summary = "新增字典类型")
-    @PostMapping("/type/add")
-    public ApiResponse typeAdd(@RequestBody DictType dictType) {
+    @PostMapping("/type")
+    public ApiResponse addType(@RequestBody DictType dictType) {
         dictService.addType(dictType);
-        return new ApiResponse();
+        return ApiResponse.ok();
     }
 
     @Operation(summary = "更新字典类型")
     @PostMapping("/type/update")
-    public ApiResponse typeUpdate(@RequestBody DictType dictType) {
+    public ApiResponse updateType(@RequestBody DictType dictType) {
         dictService.updateType(dictType);
-        return new ApiResponse();
+        return ApiResponse.ok();
     }
 
     @Operation(summary = "删除字典类型")
     @PostMapping("/type/delete")
-    public ApiResponse typeDelete(@RequestBody DictType dictType) {
+    public ApiResponse deleteType(@RequestBody DictType dictType) {
         dictService.deleteType(dictType.getId());
-        return new ApiResponse();
+        return ApiResponse.ok();
     }
 
     @Operation(summary = "字典类型详情")
     @PostMapping("/type/detail")
-    public ApiResponse typeDetail(@RequestBody DictType dictType) {
-        return dictService.typeDetail(dictType.getId());
+    public ApiResponse<DictType> typeDetail(@RequestBody DictType dictType) {
+        DictType detail = dictService.typeDetail(dictType.getId());
+        return ApiResponse.success(detail);
     }
+
+    /* ===================== 字典项 ===================== */
 
     @Operation(summary = "字典项列表")
     @PostMapping("/item/list")
-    public ApiResponse itemList(@RequestBody(required = false) DictItem dictItem) {
+    public ApiResponse<List<DictItem>> listItems(@RequestBody(required = false) DictItem dictItem) {
         String typeCode = dictItem == null ? null : dictItem.getTypeCode();
-        return dictService.listItems(typeCode);
+        return ApiResponse.success(dictService.listItems(typeCode));
     }
-
     @Operation(summary = "新增字典项")
-    @PostMapping("/item/add")
-    public ApiResponse itemAdd(@RequestBody DictItem dictItem) {
+    @PostMapping("/item")
+    public ApiResponse addItem(@RequestBody DictItem dictItem) {
         dictService.addItem(dictItem);
-        return new ApiResponse();
+        return ApiResponse.ok();
     }
 
     @Operation(summary = "更新字典项")
     @PostMapping("/item/update")
-    public ApiResponse itemUpdate(@RequestBody DictItem dictItem) {
+    public ApiResponse updateItem(@RequestBody DictItem dictItem) {
         dictService.updateItem(dictItem);
-        return new ApiResponse();
+        return ApiResponse.ok();
     }
 
     @Operation(summary = "删除字典项")
     @PostMapping("/item/delete")
-    public ApiResponse itemDelete(@RequestBody DictItem dictItem) {
+    public ApiResponse deleteItem(@RequestBody DictItem dictItem) {
         dictService.deleteItem(dictItem.getId());
-        return new ApiResponse();
+        return ApiResponse.ok();
     }
 
     @Operation(summary = "字典项详情")
     @PostMapping("/item/detail")
-    public ApiResponse itemDetail(@RequestBody DictItem dictItem) {
-        return dictService.itemDetail(dictItem.getId());
+    public ApiResponse<DictItem> itemDetail(@RequestBody DictItem dictItem) {
+        DictItem detail = dictService.itemDetail(dictItem.getId());
+        return ApiResponse.success(detail);
     }
 }
-

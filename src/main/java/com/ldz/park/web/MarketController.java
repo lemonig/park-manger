@@ -26,76 +26,36 @@ import java.util.UUID;
 public class MarketController {
 
     @Autowired
-    MarketService marketService;
+    private MarketService marketService;
 
-    @Autowired
-    UserService userService;
-
-    @PostMapping(value = "/list")
-    public ApiResponse marketList(HttpServletRequest request){
-        return marketService.list();
+    @PostMapping("/list")
+    public ApiResponse<List<Market>> list() {
+        List<Market> list = marketService.list();
+        return ApiResponse.success(list);
     }
 
-    @PostMapping(value = "/add")
-    public ApiResponse marketAdd(HttpServletRequest request, @RequestBody Market market) {
-        // 生成唯一编码
-        String code = UUID.randomUUID().toString().replace("-", "");
-        market.setCode(code);
+    @PostMapping("/detail")
+    public ApiResponse<Market> detail(@RequestBody Market market) {
+        return ApiResponse.success(
+                marketService.detail(market.getId())
+        );
+    }
 
-        // 获取请求头中的 token
-        String token = request.getHeader("token");
-        if (token == null || token.isEmpty()) {
-            ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
-            apiErrorResponse.setMessage("token<UNK>");
-            return apiErrorResponse;
-        }
-
-        // 通过 token 获取用户 ID
-        Integer userId = userService.getUserIdByToken(token);
-        if (userId == null) {
-            ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
-            apiErrorResponse.setMessage("Invalid token");
-            return apiErrorResponse;
-        }
-        market.setOwnerId(userId);
-
-        // 设置创建时间和修改时间
-        market.setGmtCreate(LocalDateTime.now());
-        market.setGmtModify(LocalDateTime.now());
-
-        // 获取图片列表，校验是否为空
-        List<SimpleImage> images = market.getImages();
-        if (images != null && !images.isEmpty()) {
-            for (SimpleImage image : images) {
-                String id = image.getId();
-                String url = image.getUrl();
-                marketService.insertImg(code, id, userId);
-            }
-        }
-
-        // 添加 market 数据
+    @PostMapping("/add")
+    public ApiResponse<Void> add(@RequestBody Market market) {
         marketService.add(market);
-        return new ApiResponse("添加成功");
+        return ApiResponse.success("添加成功", null);
     }
-
-
 
     @PostMapping("/update")
-    public ApiResponse marketUpdate(HttpServletRequest request,@RequestBody Market market){
+    public ApiResponse<Void> update(@RequestBody Market market) {
         marketService.update(market);
-        return new ApiResponse();
+        return ApiResponse.success("更新成功", null);
     }
 
     @PostMapping("/delete")
-    ApiResponse marketDelete(HttpServletRequest request,@RequestBody Market market){
+    public ApiResponse<Void> delete(@RequestBody Market market) {
         marketService.delete(market.getId());
-        return new ApiResponse();
+        return ApiResponse.success("删除成功", null);
     }
-
-    @Operation(summary = "获取车位详情")
-    @PostMapping(value = "/detail")
-    public ApiResponse detail(@RequestBody Market market) {
-        return marketService.detail(market.getId());
-    }
-
 }

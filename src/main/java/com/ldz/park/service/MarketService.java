@@ -15,52 +15,63 @@ import java.util.Map;
 
 @Service
 public class MarketService {
+
     @Autowired
     private MarketMapper marketMapper;
 
-    @Autowired
-    private FileRecordService fileRecordService;
-
-    public ApiResponse list (){
+    /**
+     * 查询市场列表（不关心分页表现）
+     */
+    public List<Market> list() {
         List<Market> list = marketMapper.list();
-        for (Market m : list) {
-            List<SimpleImage> image = marketMapper.selectImagesByMarketCode(m.getCode());
-            m.setImages(image);
-        }
-
-
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setData(list);
-        apiResponse.setAdditional_data(PaginationUtil.getTotal(new PageInfo<>(list)));
-        return apiResponse;
+        list.forEach(this::fillImages);
+        return list;
     }
 
-    public void add (Market market){
+    /**
+     * 新增市场
+     */
+    public void add(Market market) {
         marketMapper.add(market);
     }
 
-    public void update(Market market){
+    /**
+     * 更新市场
+     */
+    public void update(Market market) {
         marketMapper.update(market);
     }
 
-    public void delete(Integer id){
+    /**
+     * 删除
+     */
+    public void delete(Integer id) {
         marketMapper.delete(id);
     }
 
-    public ApiResponse detail(Integer id){
+    /**
+     * 获取详情
+     */
+    public Market detail(Integer id) {
         Market market = marketMapper.getDetailById(id);
-        List<SimpleImage> imgs = marketMapper.selectImagesByMarketCode(market.getCode());
-        market.setImages(imgs);
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setData(market);
-        return apiResponse;
+        fillImages(market);
+        return market;
     }
 
-    public void insertImg(String marketCode,String image_id, Integer  userId){
-        marketMapper.insertImg(marketCode,image_id,userId );
+    /**
+     * 关联图片
+     */
+    private void fillImages(Market market) {
+        if (market == null) return;
+        List<SimpleImage> images =
+                marketMapper.selectImagesByMarketCode(market.getCode());
+        market.setImages(images);
     }
 
-    public List<SimpleImage> getImagesByMarketCode(String marketCode) {
-        return marketMapper.selectImagesByMarketCode(marketCode);
+    /**
+     * 保存图片关联
+     */
+    public void insertImg(String marketCode, String imageId, Integer userId) {
+        marketMapper.insertImg(marketCode, imageId, userId);
     }
 }
