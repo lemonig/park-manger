@@ -1,21 +1,18 @@
 package com.ldz.park.config;
 
-
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
+import jakarta.validation.constraints.NotNull;  // Jakarta 版（SB3 标准）
 import javax.sql.DataSource;
-import javax.validation.constraints.NotNull;
-import java.sql.SQLException;
 
 @Configuration
-//以 mysql 开头的属性都会被映射到当前类的对应属性上
-@ConfigurationProperties(prefix = "mysql")
+@ConfigurationProperties(prefix = "mysql")  // 保持您的自定义 prefix
 public class MySQLConfiguration {
-
 
     @NotNull
     private String user;
@@ -26,7 +23,7 @@ public class MySQLConfiguration {
     @NotNull
     private String url;
 
-
+    // getter/setter
     public String getUser() {
         return user;
     }
@@ -52,19 +49,23 @@ public class MySQLConfiguration {
     }
 
     @Bean
-    public DataSource dataSource()throws SQLException{
-        HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        hikariConfig.setUsername(getUser());
-        hikariConfig.setPassword(getPassword());
-        hikariConfig.setJdbcUrl(getUrl());
-        hikariConfig.setPoolName("ServerHikariCP");
-        hikariConfig.setMaximumPoolSize(20);
-        hikariConfig.setConnectionTimeout(80 * 1000);
-        hikariConfig.setIdleTimeout(80 * 1000);
-        hikariConfig.setMaxLifetime(100 * 1000);
-        hikariConfig.setMinimumIdle(5);
-        hikariConfig.setJdbcUrl(getUrl() + "&allowMultiQueries=true");
-        return new HikariDataSource(hikariConfig);
+    public DataSource dataSource() {
+        if (!StringUtils.hasText(url)) {
+            throw new IllegalArgumentException("数据库 URL 不能为空，请检查配置 mysql.url");
+        }
+
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(url + (url.contains("?") ? "&" : "?") + "allowMultiQueries=true");  // 安全拼接
+        config.setUsername(user);
+        config.setPassword(password);
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        config.setPoolName("ServerHikariCP");
+        config.setMaximumPoolSize(20);
+        config.setConnectionTimeout(80000);
+        config.setIdleTimeout(80000);
+        config.setMaxLifetime(100000);
+        config.setMinimumIdle(5);
+
+        return new HikariDataSource(config);
     }
 }

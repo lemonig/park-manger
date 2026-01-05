@@ -1,0 +1,80 @@
+2025-12-31 13:31:07.660 [restartedMain] INFO  com.ldz.park.ParkApplication - Starting ParkApplication using Java 21.0.2 with PID 15748 (G:\个人项目\2023年\park\target\classes started by Administrator in G:\个人项目\2023年\park)
+2025-12-31 13:31:07.685 [restartedMain] INFO  com.ldz.park.ParkApplication - The following 1 profile is active: "dev"
+2025-12-31 13:31:07.905 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-31 13:31:07.906 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-12-31 13:31:11.013 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-31 13:31:11.021 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-12-31 13:31:11.097 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 47 ms. Found 0 Redis repository interfaces.
+2025-12-31 13:31:14.908 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 3429 (http)
+2025-12-31 13:31:14.923 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-3429"]
+2025-12-31 13:31:14.927 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-31 13:31:14.928 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-12-31 13:31:15.649 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-12-31 13:31:15.649 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 7741 ms
+2025-12-31 13:31:16.293 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Starting...
+2025-12-31 13:31:17.096 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - ServerHikariCP - Added connection com.mysql.cj.jdbc.ConnectionImpl@12bafc02
+2025-12-31 13:31:17.099 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Start completed.
+2025-12-31 13:31:21.987 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-12-31 13:31:22.032 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-3429"]
+2025-12-31 13:31:22.098 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 3429 (http) with context path ''
+2025-12-31 13:31:22.118 [restartedMain] INFO  com.ldz.park.ParkApplication - Started ParkApplication in 16.441 seconds (process running for 20.531)
+2025-12-31 13:36:30.304 [http-nio-3429-exec-1] INFO  o.a.tomcat.util.http.parser.Cookie - A cookie header was received [Hm_lvt_b9f73d323b843af63cced04c171a5913=1765440479,1765501012,1766054205,1766368958] that contained an invalid cookie. That cookie will be ignored.
+ Note: further occurrences of this error will be logged at DEBUG level.
+2025-12-31 13:36:30.373 [http-nio-3429-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-31 13:36:30.375 [http-nio-3429-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-12-31 13:36:30.390 [http-nio-3429-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 8 ms
+2025-12-31 13:51:25.999 [SpringApplicationShutdownHook] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-3429"]
+2025-12-31 13:51:26.173 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown initiated...
+2025-12-31 13:51:26.252 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown completed.
+2026-01-04 15:59:48.377 [restartedMain] INFO  com.ldz.park.ParkApplication - Starting ParkApplication using Java 21.0.2 with PID 10164 (G:\个人项目\2023年\park\target\classes started by Administrator in G:\个人项目\2023年\park)
+2026-01-04 15:59:48.380 [restartedMain] INFO  com.ldz.park.ParkApplication - The following 1 profile is active: "dev"
+2026-01-04 15:59:48.935 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-01-04 15:59:48.935 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-01-04 15:59:52.370 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-01-04 15:59:52.373 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-01-04 15:59:52.421 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 26 ms. Found 0 Redis repository interfaces.
+2026-01-04 15:59:55.487 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 3429 (http)
+2026-01-04 15:59:55.679 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-3429"]
+2026-01-04 15:59:55.882 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-01-04 15:59:55.891 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-01-04 15:59:56.074 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-01-04 15:59:56.076 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 7139 ms
+2026-01-04 15:59:56.374 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Starting...
+2026-01-04 16:00:02.185 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - ServerHikariCP - Added connection com.mysql.cj.jdbc.ConnectionImpl@75e019e0
+2026-01-04 16:00:02.191 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Start completed.
+2026-01-04 16:00:05.558 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-01-04 16:00:05.633 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-3429"]
+2026-01-04 16:00:05.673 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 3429 (http) with context path ''
+2026-01-04 16:00:05.685 [restartedMain] INFO  com.ldz.park.ParkApplication - Started ParkApplication in 19.884 seconds (process running for 22.365)
+2026-01-04 16:02:12.635 [http-nio-3429-exec-1] INFO  o.a.tomcat.util.http.parser.Cookie - A cookie header was received [Hm_lvt_b9f73d323b843af63cced04c171a5913=1765440479,1765501012,1766054205,1766368958] that contained an invalid cookie. That cookie will be ignored.
+ Note: further occurrences of this error will be logged at DEBUG level.
+2026-01-04 16:02:12.705 [http-nio-3429-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-04 16:02:12.708 [http-nio-3429-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-01-04 16:02:12.731 [http-nio-3429-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2026-01-04 16:07:05.552 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown initiated...
+2026-01-04 16:07:09.890 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown completed.
+2026-01-04 16:09:01.643 [restartedMain] INFO  com.ldz.park.ParkApplication - Starting ParkApplication using Java 21.0.2 with PID 12916 (G:\个人项目\2023年\park\target\classes started by Administrator in G:\个人项目\2023年\park)
+2026-01-04 16:09:01.646 [restartedMain] INFO  com.ldz.park.ParkApplication - The following 1 profile is active: "dev"
+2026-01-04 16:09:01.792 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-01-04 16:09:01.792 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-01-04 16:09:03.399 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-01-04 16:09:03.402 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-01-04 16:09:03.442 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 24 ms. Found 0 Redis repository interfaces.
+2026-01-04 16:09:05.398 [restartedMain] INFO  o.s.b.w.e.j.JettyServletWebServerFactory - Server initialized with port: 3429
+2026-01-04 16:09:05.404 [restartedMain] INFO  org.eclipse.jetty.server.Server - jetty-12.0.6; built: 2024-01-30T02:43:24.387Z; git: 78ab6e6ba163f89cdd97f2ae0283fbb5e371cfaf; jvm 21.0.2+13-LTS-58
+2026-01-04 16:09:05.461 [restartedMain] INFO  o.e.j.s.h.ContextHandler.application - Initializing Spring embedded WebApplicationContext
+2026-01-04 16:09:05.461 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3669 ms
+2026-01-04 16:09:05.722 [restartedMain] INFO  o.e.j.s.DefaultSessionIdManager - Session workerName=node0
+2026-01-04 16:09:05.733 [restartedMain] INFO  o.e.j.server.handler.ContextHandler - Started osbwej.JettyEmbeddedWebAppContext@3c7682e7{application,/,b=[file:/C:/Users/Administrator/AppData/Local/Temp/jetty-docbase.3429.12018860546335663932/, jar:file:///E:/maven/apache-maven-3.9.7/resp/org/webjars/swagger-ui/5.10.3/swagger-ui-5.10.3.jar!/META-INF/resources/],a=AVAILABLE,h=oeje10s.SessionHandler@747e263f{STARTED}}
+2026-01-04 16:09:05.733 [restartedMain] INFO  o.e.j.e.s.ServletContextHandler - Started osbwej.JettyEmbeddedWebAppContext@3c7682e7{application,/,b=[file:/C:/Users/Administrator/AppData/Local/Temp/jetty-docbase.3429.12018860546335663932/, jar:file:///E:/maven/apache-maven-3.9.7/resp/org/webjars/swagger-ui/5.10.3/swagger-ui-5.10.3.jar!/META-INF/resources/],a=AVAILABLE,h=oeje10s.SessionHandler@747e263f{STARTED}}
+2026-01-04 16:09:05.753 [restartedMain] INFO  org.eclipse.jetty.server.Server - Started oejs.Server@6b0cebb{STARTING}[12.0.6,sto=0] @12447ms
+2026-01-04 16:09:05.835 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Starting...
+2026-01-04 16:09:11.191 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - ServerHikariCP - Added connection com.mysql.cj.jdbc.ConnectionImpl@53a90d1
+2026-01-04 16:09:11.193 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Start completed.
+2026-01-04 16:09:13.736 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-01-04 16:09:13.808 [restartedMain] INFO  o.e.j.s.h.ContextHandler.application - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-04 16:09:13.808 [restartedMain] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-01-04 16:09:13.810 [restartedMain] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-01-04 16:09:13.860 [restartedMain] INFO  o.e.jetty.server.AbstractConnector - Started ServerConnector@68de68c1{HTTP/1.1, (http/1.1)}{0.0.0.0:3429}
+2026-01-04 16:09:13.877 [restartedMain] INFO  o.s.b.w.e.jetty.JettyWebServer - Jetty started on port 3429 (http/1.1) with context path '/'
+2026-01-04 16:09:13.894 [restartedMain] INFO  com.ldz.park.ParkApplication - Started ParkApplication in 13.857 seconds (process running for 20.588)

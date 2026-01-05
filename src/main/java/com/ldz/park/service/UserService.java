@@ -53,9 +53,9 @@ public class UserService {
         return  ApiResponse.success(list);
     }
 
-    public void deleteFailUser(String user_name) {
-        userMapper.deleteFailUser(user_name);
-    }
+//    public void deleteFailUser(String user_name) {
+//        userMapper.deleteFailUser(user_name);
+//    }
 
 
     public Integer getUserIdByToken(String token) {
