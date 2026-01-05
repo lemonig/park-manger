@@ -52,19 +52,17 @@ public class MarketController {
     @Operation(summary = "车位列表查询", description = "支持分页、租售类型、车位编号模糊、审核状态过滤")
     @GetMapping("/list")
     public ApiResponse<PageInfo<Market>> list(
-            @Parameter(description = "页码，默认1") @RequestParam(defaultValue = "1") int pageNum,
-            @Parameter(description = "每页大小，默认10") @RequestParam(defaultValue = "10") int pageSize,
-            @Parameter(description = "租售类型：1出售 2租赁") @RequestParam(required = false) Integer type,
-            @Parameter(description = "车位编号模糊查询") @RequestParam(required = false) String parkingNo,
-            @Parameter(description = "审核状态：0待审核 1通过 2拒绝") @RequestParam(required = false) Integer status) {
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) Integer type,
+            @RequestParam(required = false) String number,  // 改成 number，与实体一致
+            @RequestParam(required = false) Integer status) {
 
-        // PageHelper 分页
         PageHelper.startPage(pageNum, pageSize);
 
-        // 构建条件（假设 service 支持 Market query 参数）
         Market query = new Market();
         if (type != null) query.setType(type);
-        if (parkingNo != null && !parkingNo.trim().isEmpty()) query.setParkingNo(parkingNo);
+        if (number != null && !number.trim().isEmpty()) query.setNumber(number);  // 用 setNumber
         if (status != null) query.setStatus(status);
 
         List<Market> list = marketService.list(query);
@@ -72,7 +70,6 @@ public class MarketController {
 
         return ApiResponse.success(pageInfo);
     }
-
     /**
      * 查询详情
      */
