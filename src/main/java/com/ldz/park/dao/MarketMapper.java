@@ -16,9 +16,9 @@ public interface MarketMapper {
 
     int update(Market market);
 
-    int delete(Integer id);
+    int delete(Long id);
 
-    Market getDetailById(Integer id);
+    Market getDetailById(Long id);
 
     List<SimpleImage> selectImagesByMarketCodes(@Param("codes") List<String> codes);
 

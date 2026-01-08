@@ -8,10 +8,13 @@ import com.ldz.park.model.meta.ApiResponse;
 import com.ldz.park.model.vo.market.SimpleImage;
 import com.ldz.park.service.MarketService;
 import com.ldz.park.service.UserService;
+import com.ldz.park.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -46,27 +49,41 @@ public class MarketController {
     @Autowired
     private MarketService marketService;
 
+    @Autowired
+    private JwtUtil jwtUtil;  // 注入工具类
+
     /**
      * 查询列表（支持分页 + 条件）
      */
-    @Operation(summary = "车位列表查询", description = "支持分页、租售类型、车位编号模糊、审核状态过滤")
+    /**
+     * 查询车位列表（分页 + 条件查询）
+     */
+    @Operation(summary = "查询车位列表", description = "支持分页、租售类型、车位编号模糊查询、审核状态过滤，返回已填充图片的完整数据")
     @GetMapping("/list")
     public ApiResponse<PageInfo<Market>> list(
-            @RequestParam(defaultValue = "1") int pageNum,
-            @RequestParam(defaultValue = "10") int pageSize,
+            @Parameter(description = "页码（最小1）")
+            @RequestParam(defaultValue = "1") @Min(1) int pageNum,
+
+            @Parameter(description = "每页大小（最小1，推荐10-50）")
+            @RequestParam(defaultValue = "10") @Min(1) int pageSize,
+
+            @Parameter(description = "租售类型：1=出售，2=租赁（可选）")
             @RequestParam(required = false) Integer type,
-            @RequestParam(required = false) String number,  // 改成 number，与实体一致
+
+            @Parameter(description = "车位编号模糊查询（如 'A-101'，可选）")
+            @RequestParam(required = false) String parkingNo,
+
+            @Parameter(description = "审核状态：0=待审核，1=通过，2=拒绝（可选）")
             @RequestParam(required = false) Integer status) {
 
-        PageHelper.startPage(pageNum, pageSize);
-
+        // 构建查询条件对象
         Market query = new Market();
-        if (type != null) query.setType(type);
-        if (number != null && !number.trim().isEmpty()) query.setNumber(number);  // 用 setNumber
-        if (status != null) query.setStatus(status);
+        query.setType(type);
+        query.setParkingNo(parkingNo);
+        query.setStatus(status);
 
-        List<Market> list = marketService.list(query);
-        PageInfo<Market> pageInfo = new PageInfo<>(list);
+        // 调用 Service（内部已处理分页 + 批量图片填充）
+        PageInfo<Market> pageInfo = marketService.list(query, pageNum, pageSize);
 
         return ApiResponse.success(pageInfo);
     }
@@ -76,7 +93,7 @@ public class MarketController {
     @Operation(summary = "车位详情查询")
     @GetMapping("/detail/{id}")
     public ApiResponse<Market> detail(@Parameter(description = "车位ID") @PathVariable Long id) {
-        Market market = marketService.detail(id);
+        Market market = marketService.detail(id); //这里需要看下 传参的格式不太对
         if (market == null) {
             return ApiResponse.error(404, "车位信息不存在");
         }
@@ -88,12 +105,25 @@ public class MarketController {
      */
     @Operation(summary = "新增车位信息")
     @PostMapping("/add")
-    public ApiResponse<Void> add(@Valid @RequestBody Market market, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ApiResponse.error(400, bindingResult.getFieldError().getDefaultMessage());
+    public ApiResponse<Void> add(@Valid @RequestBody Market market,
+                                 @RequestParam("userId") Integer userId,  // 临时前端传，生产删掉
+                                 HttpServletRequest request) {
+
+
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ApiResponse.error(401, "未登录");
         }
-        marketService.add(market);
-        return ApiResponse.success("添加成功");
+        String token = authHeader.substring(7);
+
+        // 解析 userId
+        Integer currentUserId = jwtUtil.extractUserId(token);
+        if (jwtUtil.isTokenExpired(token)) {
+            return ApiResponse.error(401, "登录过期");
+        }
+
+        marketService.add(market, currentUserId);
+        return ApiResponse.ok();
     }
 
     /**
@@ -109,7 +139,7 @@ public class MarketController {
             return ApiResponse.error(400, "更新时ID不能为空");
         }
         marketService.update(market);
-        return ApiResponse.success("更新成功");
+        return ApiResponse.success();
     }
 
     /**
@@ -119,6 +149,6 @@ public class MarketController {
     @DeleteMapping("/delete/{id}")
     public ApiResponse<Void> delete(@Parameter(description = "车位ID") @PathVariable Long id) {
         marketService.delete(id);
-        return ApiResponse.success("删除成功");
+        return ApiResponse.success();
     }
 }

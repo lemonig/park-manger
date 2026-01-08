@@ -3,38 +3,35 @@ package com.ldz.park.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ldz.park.dao.MarketMapper;
-import com.ldz.park.entity.FileRecord;
 import com.ldz.park.model.Market;
-import com.ldz.park.model.meta.ApiResponse;
 import com.ldz.park.model.vo.market.SimpleImage;
-import com.ldz.park.util.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * 车位租售业务 Service（优化版）
+ * 车位租售业务 Service（完整优化版）
  *
- * 优化说明：
- * 1. 支持分页 + 条件查询（list 方法重载，支持 Market query 对象作为条件）。
- * 2. 使用 PageHelper 实现物理分页，返回 PageInfo（含 total/pages/list 等，前端直接用）。
- * 3. 新增/更新/删除 加 @Transactional（事务保证数据一致性，尤其是图片关联）。
- * 4. 新增时自动生成唯一 code（UUID，防重）。
- * 5. 默认审核状态为待审核（status = 0）。
- * 6. 图片填充优化：
- *    - 列表查询时批量填充（先查所有 code，再批量查图片，避免 N+1）。
- *    - 详情保持单条填充。
- * 7. insertImg 支持批量（多图上传场景）。
- * 8. 参数校验 + 异常抛出（业务异常，Controller 可捕获统一返回）。
- * 9. 代码结构清晰、注释完善、可维护性强。
- * 10. 移除无用 import，添加必要工具类使用。
+ * 业务说明：
+ * 1. 支持分页 + 条件查询（type、parkingNo 模糊、status）。
+ * 2. 列表查询自动批量填充图片（性能优化，避免 N+1）。
+ * 3. 新增时：
+ *    - 自动生成唯一 code（UUID 大写无-）。
+ *    - 默认 status = 0（待审核）。
+ * 4. 更新/删除/详情 支持事务 + 基本校验。
+ * 5. 图片操作：
+ *    - 批量插入 saveImages（推荐，多图上传）。
+ *    - 单图 insertImg（兼容原方法）。
+ *    - 删除车位时自动清理关联图片。
+ * 6. 异常处理：抛 IllegalArgumentException（Controller 统一捕获返回错误响应）。
+ * 7. 兼容纯 MyBatis + PageHelper（与您的 pom 完美匹配）。
  */
 @Service
 public class MarketService {
@@ -43,47 +40,26 @@ public class MarketService {
     private MarketMapper marketMapper;
 
     /**
-     * 查询列表（支持分页 + 条件查询）
-     *
-     * @param query    查询条件（type、parkingNo、status 等，可为 null 表示不限制）
-     * @param pageNum  页码（默认 1）
-     * @param pageSize 每页大小（默认 10）
-     * @return PageInfo<Market>（含分页信息和填充图片的列表）
+     * 查询列表（支持分页 + 条件查询，已填充图片）
      */
     public PageInfo<Market> list(Market query, int pageNum, int pageSize) {
-        // 默认值处理
-        pageNum = pageNum < 1 ? 1 : pageNum;
-        pageSize = pageSize < 1 ? 10 : pageSize;
+        // 参数安全处理
+        pageNum = Math.max(pageNum, 1);
+        pageSize = Math.max(pageSize, 1);
 
         // 启动分页
         PageHelper.startPage(pageNum, pageSize);
 
-        // 执行查询
-        List<Market> list = marketMapper.list(query);
+        // 执行条件查询
+        List<Market> list = marketMapper.list(query == null ? new Market() : query);
 
-        // 批量填充图片（性能优化，避免 N+1 查询）
-        if (!list.isEmpty()) {
-            // 提取所有 code
-            List<String> codes = list.stream()
-                    .map(Market::getCode)
-                    .collect(Collectors.toList());
 
-            // 批量查图片（Mapper 需要实现 selectImagesByMarketCodes）
-            List<SimpleImage> allImages = marketMapper.selectImagesByMarketCodes(codes);
-
-            // 按 code 分组
-            Map<String, List<SimpleImage>> imagesMap = allImages.stream()
-                    .collect(Collectors.groupingBy(SimpleImage::getMarketCode));
-
-            // 填充到每个 Market
-            list.forEach(market -> market.setImages(imagesMap.getOrDefault(market.getCode(), List.of())));
-        }
-
+        batchFillImages(list);  // 批量填充
         return new PageInfo<>(list);
     }
 
     /**
-     * 无分页全量列表（保留原方法，内部调用分页大尺寸）
+     * 无分页全量列表（兼容原方法）
      */
     public List<Market> list() {
         PageInfo<Market> pageInfo = list(new Market(), 1, Integer.MAX_VALUE);
@@ -91,25 +67,32 @@ public class MarketService {
     }
 
     /**
-     * 新增车位
+     * 新增车位（含图片批量保存）
      */
     @Transactional(rollbackFor = Exception.class)
-    public void add(Market market) {
+    public void add(Market market,Integer currentUserId) {
         if (market == null) {
             throw new IllegalArgumentException("车位信息不能为空");
         }
 
-        // 自动生成唯一 code
+        // 自动生成 code
         if (!StringUtils.hasText(market.getCode())) {
             market.setCode(UUID.randomUUID().toString().replace("-", "").toUpperCase());
         }
 
         // 默认待审核
         if (market.getStatus() == null) {
-            market.setStatus(0);  // 0=待审核
+            market.setStatus(0);
         }
 
         marketMapper.add(market);
+        List imageIds = market.getImages().stream().map(item -> item.getId()).collect(Collectors.toList());
+        // 保存图片关联（如果有）
+
+
+        if (imageIds != null && !imageIds.isEmpty()) {
+            saveImages(market.getCode(), imageIds, currentUserId);
+        }
     }
 
     /**
@@ -128,27 +111,33 @@ public class MarketService {
     }
 
     /**
-     * 删除车位
+     * 删除车位（清理关联图片）
      */
     @Transactional(rollbackFor = Exception.class)
-    public void delete(Integer id) {
+    public void delete(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("ID不能为空");
         }
 
-        // 可先删除关联图片（业务需求）
-        marketMapper.deleteImagesByMarketId(id);
+        Market market = marketMapper.getDetailById(id);
+        if (market == null) {
+            throw new IllegalArgumentException("车位信息不存在");
+        }
 
+        // 先清理图片关联
+        marketMapper.deleteImagesByMarketCode(market.getCode());
+
+        // 再删主记录
         int rows = marketMapper.delete(id);
         if (rows == 0) {
-            throw new IllegalArgumentException("车位信息不存在或已删除");
+            throw new IllegalArgumentException("删除失败，车位信息已不存在");
         }
     }
 
     /**
-     * 获取详情（带图片填充）
+     * 获取详情（已填充图片）
      */
-    public Market detail(Integer id) {
+    public Market detail(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("ID不能为空");
         }
@@ -158,31 +147,21 @@ public class MarketService {
             return null;  // 或抛异常，由 Controller 处理
         }
 
-        fillImages(market);
+
+
+        fillImages(market);  // 单条填充
+
         return market;
     }
 
     /**
-     * 单条填充图片（详情用）
-     */
-    private void fillImages(Market market) {
-        if (market == null || !StringUtils.hasText(market.getCode())) {
-            return;
-        }
-        List<SimpleImage> images = marketMapper.selectImagesByMarketCode(market.getCode());
-        market.setImages(images);
-    }
-
-    /**
-     * 保存图片关联（支持批量）
+     * 批量保存图片关联
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveImages(String marketCode, List<String> imageIds, Integer userId) {
         if (!StringUtils.hasText(marketCode) || imageIds == null || imageIds.isEmpty()) {
             return;
         }
-
-        // 批量插入（Mapper 需要支持批量）
         marketMapper.insertImagesBatch(marketCode, imageIds, userId);
     }
 
@@ -190,6 +169,49 @@ public class MarketService {
      * 单图插入（兼容原方法）
      */
     public void insertImg(String marketCode, String imageId, Integer userId) {
-        saveImages(marketCode, List.of(imageId), userId);
+        if (StringUtils.hasText(marketCode) && StringUtils.hasText(imageId)) {
+            marketMapper.insertImg(marketCode, imageId, userId);
+        }
+    }
+
+    /**
+     * 批量填充图片（列表查询用，性能最优：1+1 查询 + groupingBy 分组）
+     */
+    private void batchFillImages(List<Market> list) {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+
+        // 提取所有唯一 code
+        List<String> codes = list.stream()
+                .map(Market::getCode)
+                .distinct()
+                .collect(Collectors.toList());
+
+        // 批量查询所有图片（Mapper selectImagesByMarketCodes 返回带 marketCode 的 SimpleImage）
+        List<SimpleImage> allImages = marketMapper.selectImagesByMarketCodes(codes);
+
+        // 按 marketCode 分组（高效 O(n)）
+        Map<String, List<SimpleImage>> imagesMap = allImages.stream()
+                .collect(Collectors.groupingBy(SimpleImage::getMarketCode));
+
+        // 填充到每个 Market（无 marketCode 的设空列表，避免 null）
+        list.forEach(market -> {
+            List<SimpleImage> marketImages = imagesMap.getOrDefault(market.getCode(), new ArrayList<>());
+            market.setImages(marketImages);
+        });
+    }
+
+    /**
+     * 单条填充图片（详情查询用，兼容）
+     */
+    private void fillImages(Market market) {
+        if (market == null || !StringUtils.hasText(market.getCode())) {
+            market.setImages(new ArrayList<>());
+            return;
+        }
+
+        List<SimpleImage> images = marketMapper.selectImagesByMarketCode(market.getCode());
+        market.setImages(images == null ? new ArrayList<>() : images);
     }
 }

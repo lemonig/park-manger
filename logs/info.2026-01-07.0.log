@@ -1,0 +1,56 @@
+2026-01-07 19:26:59.811 [restartedMain] INFO  com.ldz.park.ParkApplication - Starting ParkApplication using Java 21.0.2 with PID 21236 (G:\个人项目\2023年\park\target\classes started by Administrator in G:\个人项目\2023年\park)
+2026-01-07 19:26:59.956 [restartedMain] INFO  com.ldz.park.ParkApplication - The following 1 profile is active: "dev"
+2026-01-07 19:27:00.082 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-01-07 19:27:00.083 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-01-07 19:27:02.275 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-01-07 19:27:02.278 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-01-07 19:27:02.337 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 38 ms. Found 0 Redis repository interfaces.
+2026-01-07 19:27:04.063 [restartedMain] INFO  o.s.b.w.e.j.JettyServletWebServerFactory - Server initialized with port: 3429
+2026-01-07 19:27:04.068 [restartedMain] INFO  org.eclipse.jetty.server.Server - jetty-12.0.6; built: 2024-01-30T02:43:24.387Z; git: 78ab6e6ba163f89cdd97f2ae0283fbb5e371cfaf; jvm 21.0.2+13-LTS-58
+2026-01-07 19:27:04.104 [restartedMain] INFO  o.e.j.s.h.ContextHandler.application - Initializing Spring embedded WebApplicationContext
+2026-01-07 19:27:04.104 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4011 ms
+2026-01-07 19:27:04.182 [restartedMain] INFO  o.e.j.s.DefaultSessionIdManager - Session workerName=node0
+2026-01-07 19:27:04.191 [restartedMain] INFO  o.e.j.server.handler.ContextHandler - Started osbwej.JettyEmbeddedWebAppContext@52885108{application,/,b=[file:/C:/Users/Administrator/AppData/Local/Temp/jetty-docbase.3429.10692155301538500824/, jar:file:///E:/maven/apache-maven-3.9.7/resp/org/webjars/swagger-ui/5.10.3/swagger-ui-5.10.3.jar!/META-INF/resources/],a=AVAILABLE,h=oeje10s.SessionHandler@57db0a2c{STARTED}}
+2026-01-07 19:27:04.192 [restartedMain] INFO  o.e.j.e.s.ServletContextHandler - Started osbwej.JettyEmbeddedWebAppContext@52885108{application,/,b=[file:/C:/Users/Administrator/AppData/Local/Temp/jetty-docbase.3429.10692155301538500824/, jar:file:///E:/maven/apache-maven-3.9.7/resp/org/webjars/swagger-ui/5.10.3/swagger-ui-5.10.3.jar!/META-INF/resources/],a=AVAILABLE,h=oeje10s.SessionHandler@57db0a2c{STARTED}}
+2026-01-07 19:27:04.195 [restartedMain] INFO  org.eclipse.jetty.server.Server - Started oejs.Server@a296653{STARTING}[12.0.6,sto=0] @6949ms
+2026-01-07 19:27:04.375 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Starting...
+2026-01-07 19:27:08.736 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - ServerHikariCP - Added connection com.mysql.cj.jdbc.ConnectionImpl@4a3ea326
+2026-01-07 19:27:08.745 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Start completed.
+2026-01-07 19:27:11.246 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-01-07 19:27:11.279 [restartedMain] INFO  o.e.j.s.h.ContextHandler.application - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-07 19:27:11.279 [restartedMain] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-01-07 19:27:11.280 [restartedMain] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-01-07 19:27:11.317 [restartedMain] INFO  o.e.jetty.server.AbstractConnector - Started ServerConnector@1f66133{HTTP/1.1, (http/1.1)}{0.0.0.0:3429}
+2026-01-07 19:27:11.319 [restartedMain] INFO  o.s.b.w.e.jetty.JettyWebServer - Jetty started on port 3429 (http/1.1) with context path '/'
+2026-01-07 19:27:11.331 [restartedMain] INFO  com.ldz.park.ParkApplication - Started ParkApplication in 12.646 seconds (process running for 14.087)
+2026-01-07 19:38:09.859 [SpringApplicationShutdownHook] INFO  o.e.jetty.server.AbstractConnector - Stopped ServerConnector@1f66133{HTTP/1.1, (http/1.1)}{0.0.0.0:3429}
+2026-01-07 19:38:09.929 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown initiated...
+2026-01-07 19:38:09.932 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown completed.
+2026-01-07 19:38:09.933 [SpringApplicationShutdownHook] INFO  org.eclipse.jetty.server.Server - Stopped oejs.Server@a296653{STOPPING}[12.0.6,sto=0]
+2026-01-07 19:38:09.942 [SpringApplicationShutdownHook] INFO  o.e.j.s.h.ContextHandler.application - Destroying Spring FrameworkServlet 'dispatcherServlet'
+2026-01-07 19:38:09.948 [SpringApplicationShutdownHook] INFO  o.e.j.e.s.ServletContextHandler - Stopped osbwej.JettyEmbeddedWebAppContext@52885108{application,/,b=[file:/C:/Users/Administrator/AppData/Local/Temp/jetty-docbase.3429.10692155301538500824/, jar:file:///E:/maven/apache-maven-3.9.7/resp/org/webjars/swagger-ui/5.10.3/swagger-ui-5.10.3.jar!/META-INF/resources/],a=AVAILABLE,h=oeje10s.SessionHandler@57db0a2c{STOPPED}}
+2026-01-07 19:38:18.550 [restartedMain] INFO  com.ldz.park.ParkApplication - Starting ParkApplication using Java 21.0.2 with PID 19688 (G:\个人项目\2023年\park\target\classes started by Administrator in G:\个人项目\2023年\park)
+2026-01-07 19:38:18.598 [restartedMain] INFO  com.ldz.park.ParkApplication - The following 1 profile is active: "dev"
+2026-01-07 19:38:19.131 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-01-07 19:38:19.132 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-01-07 19:38:21.903 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-01-07 19:38:21.909 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-01-07 19:38:21.976 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 39 ms. Found 0 Redis repository interfaces.
+2026-01-07 19:38:23.902 [restartedMain] INFO  o.s.b.w.e.j.JettyServletWebServerFactory - Server initialized with port: 3429
+2026-01-07 19:38:23.909 [restartedMain] INFO  org.eclipse.jetty.server.Server - jetty-12.0.6; built: 2024-01-30T02:43:24.387Z; git: 78ab6e6ba163f89cdd97f2ae0283fbb5e371cfaf; jvm 21.0.2+13-LTS-58
+2026-01-07 19:38:23.970 [restartedMain] INFO  o.e.j.s.h.ContextHandler.application - Initializing Spring embedded WebApplicationContext
+2026-01-07 19:38:23.972 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4836 ms
+2026-01-07 19:38:24.093 [restartedMain] INFO  o.e.j.s.DefaultSessionIdManager - Session workerName=node0
+2026-01-07 19:38:24.160 [restartedMain] INFO  o.e.j.server.handler.ContextHandler - Started osbwej.JettyEmbeddedWebAppContext@ef278a6{application,/,b=[file:/C:/Users/Administrator/AppData/Local/Temp/jetty-docbase.3429.18116053031006759137/, jar:file:///E:/maven/apache-maven-3.9.7/resp/org/webjars/swagger-ui/5.10.3/swagger-ui-5.10.3.jar!/META-INF/resources/],a=AVAILABLE,h=oeje10s.SessionHandler@cb96e1{STARTED}}
+2026-01-07 19:38:24.162 [restartedMain] INFO  o.e.j.e.s.ServletContextHandler - Started osbwej.JettyEmbeddedWebAppContext@ef278a6{application,/,b=[file:/C:/Users/Administrator/AppData/Local/Temp/jetty-docbase.3429.18116053031006759137/, jar:file:///E:/maven/apache-maven-3.9.7/resp/org/webjars/swagger-ui/5.10.3/swagger-ui-5.10.3.jar!/META-INF/resources/],a=AVAILABLE,h=oeje10s.SessionHandler@cb96e1{STARTED}}
+2026-01-07 19:38:24.168 [restartedMain] INFO  org.eclipse.jetty.server.Server - Started oejs.Server@289a1613{STARTING}[12.0.6,sto=0] @10307ms
+2026-01-07 19:38:24.269 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Starting...
+2026-01-07 19:38:29.605 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - ServerHikariCP - Added connection com.mysql.cj.jdbc.ConnectionImpl@174cd57c
+2026-01-07 19:38:29.614 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Start completed.
+2026-01-07 19:38:32.652 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-01-07 19:38:32.685 [restartedMain] INFO  o.e.j.s.h.ContextHandler.application - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-07 19:38:32.686 [restartedMain] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-01-07 19:38:32.688 [restartedMain] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-01-07 19:38:32.765 [restartedMain] INFO  o.e.jetty.server.AbstractConnector - Started ServerConnector@6b0ca67b{HTTP/1.1, (http/1.1)}{0.0.0.0:3429}
+2026-01-07 19:38:32.768 [restartedMain] INFO  o.s.b.w.e.jetty.JettyWebServer - Jetty started on port 3429 (http/1.1) with context path '/'
+2026-01-07 19:38:32.793 [restartedMain] INFO  com.ldz.park.ParkApplication - Started ParkApplication in 16.478 seconds (process running for 18.931)

@@ -78,26 +78,6 @@
         SELECT * FROM market WHERE id = #{id}
     </select>
 
-    <!-- 批量查询图片（列表填充用，性能优化） -->
-    <select id="selectImagesByMarketCodes" resultType="com.ldz.park.model.vo.market.SimpleImage">
-        SELECT mi.market_code AS marketCode, f.id AS imageId, f.url, f.filename, f.th_url AS thumbnailUrl
-        FROM market_images mi
-        LEFT JOIN files f ON mi.image_id = f.id
-        WHERE mi.market_code IN
-        <foreach collection="codes" item="code" open="(" separator="," close=")">
-            #{code}
-        </foreach>
-        ORDER BY mi.create_time ASC  <!-- 按上传顺序 -->
-    </select>
-
-    <!-- 单码查询图片（兼容原方法） -->
-    <select id="selectImagesByMarketCode" resultType="com.ldz.park.model.vo.market.SimpleImage">
-        SELECT mi.market_code AS marketCode, f.id AS imageId, f.url, f.filename, f.th_url AS thumbnailUrl
-        FROM market_images mi
-        LEFT JOIN files f ON mi.image_id = f.id
-        WHERE mi.market_code = #{marketCode}
-        ORDER BY mi.create_time ASC
-    </select>
 
     <!-- 批量插入图片 -->
     <insert id="insertImagesBatch">
@@ -118,5 +98,26 @@
     <delete id="deleteImagesByMarketCode">
         DELETE FROM market_images WHERE market_code = #{marketCode}
     </delete>
+
+    <!-- 批量查询 -->
+    <select id="selectImagesByMarketCodes" resultType="com.ldz.park.model.vo.market.SimpleImage">
+        SELECT mi.market_code AS marketCode, mi.image_id AS id, f.url
+        FROM market_images mi
+        LEFT JOIN files f ON mi.image_id = f.id
+        WHERE mi.market_code IN
+        <foreach collection="codes" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+        ORDER BY mi.create_time ASC
+    </select>
+
+    <!-- 单码查询（兼容） -->
+    <select id="selectImagesByMarketCode" resultType="com.ldz.park.model.vo.market.SimpleImage">
+        SELECT mi.market_code AS marketCode, mi.image_id AS id, f.url
+        FROM market_images mi
+        LEFT JOIN files f ON mi.image_id = f.id
+        WHERE mi.market_code = #{marketCode}
+        ORDER BY mi.create_time ASC
+    </select>
 
 </mapper>
