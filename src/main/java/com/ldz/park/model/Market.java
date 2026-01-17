@@ -113,12 +113,12 @@ public class Market {
     /**
      * 创建时间
      */
-    private LocalDateTime createdAt;
+    private LocalDateTime gmtCreate;
 
     /**
      * 更新时间
      */
-    private LocalDateTime updatedAt;
+    private LocalDateTime gmtModify;
 
     /**
      * 关联图片列表（业务核心）

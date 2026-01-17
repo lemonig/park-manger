@@ -16,8 +16,8 @@
         <result column="specs" jdbcType="VARCHAR" property="specs"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="gmt_create" jdbcType="TIMESTAMP" property="createdAt"/>
-        <result column="gmt_modify" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify"/>
         <!-- 预留字段 -->
         <result column="city" jdbcType="VARCHAR" property="city"/>
         <result column="area" jdbcType="VARCHAR" property="area"/>
@@ -103,7 +103,7 @@
     <select id="selectImagesByMarketCodes" resultType="com.ldz.park.model.vo.market.SimpleImage">
         SELECT mi.market_code AS marketCode, mi.image_id AS id, f.url
         FROM market_images mi
-        LEFT JOIN files f ON mi.image_id = f.id
+        LEFT JOIN images f ON mi.image_id = f.id
         WHERE mi.market_code IN
         <foreach collection="codes" item="code" open="(" separator="," close=")">
             #{code}
@@ -115,7 +115,7 @@
     <select id="selectImagesByMarketCode" resultType="com.ldz.park.model.vo.market.SimpleImage">
         SELECT mi.market_code AS marketCode, mi.image_id AS id, f.url
         FROM market_images mi
-        LEFT JOIN files f ON mi.image_id = f.id
+        LEFT JOIN images f ON mi.image_id = f.id
         WHERE mi.market_code = #{marketCode}
         ORDER BY mi.create_time ASC
     </select>

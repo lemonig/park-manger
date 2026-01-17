@@ -54,7 +54,7 @@ public class MarketService {
         List<Market> list = marketMapper.list(query == null ? new Market() : query);
 
 
-        batchFillImages(list);  // 批量填充
+        batchFillImages(list);
         return new PageInfo<>(list);
     }
 
