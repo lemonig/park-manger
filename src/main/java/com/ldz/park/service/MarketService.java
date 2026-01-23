@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
  * 1. 支持分页 + 条件查询（type、parkingNo 模糊、status）。
  * 2. 列表查询自动批量填充图片（性能优化，避免 N+1）。
  * 3. 新增时：
- *    - 自动生成唯一 code（UUID 大写无-）。
- *    - 默认 status = 0（待审核）。
+ * - 自动生成唯一 code（UUID 大写无-）。
+ * - 默认 status = 0（待审核）。
  * 4. 更新/删除/详情 支持事务 + 基本校验。
  * 5. 图片操作：
- *    - 批量插入 saveImages（推荐，多图上传）。
- *    - 单图 insertImg（兼容原方法）。
- *    - 删除车位时自动清理关联图片。
+ * - 批量插入 saveImages（推荐，多图上传）。
+ * - 单图 insertImg（兼容原方法）。
+ * - 删除车位时自动清理关联图片。
  * 6. 异常处理：抛 IllegalArgumentException（Controller 统一捕获返回错误响应）。
  * 7. 兼容纯 MyBatis + PageHelper（与您的 pom 完美匹配）。
  */
@@ -53,7 +53,6 @@ public class MarketService {
         // 执行条件查询
         List<Market> list = marketMapper.list(query == null ? new Market() : query);
 
-
         batchFillImages(list);
         return new PageInfo<>(list);
     }
@@ -70,7 +69,7 @@ public class MarketService {
      * 新增车位（含图片批量保存）
      */
     @Transactional(rollbackFor = Exception.class)
-    public void add(Market market,Integer currentUserId) {
+    public void add(Market market, Integer currentUserId) {
         if (market == null) {
             throw new IllegalArgumentException("车位信息不能为空");
         }
@@ -86,9 +85,8 @@ public class MarketService {
         }
 
         marketMapper.add(market);
-        List imageIds = market.getImages().stream().map(item -> item.getId()).collect(Collectors.toList());
+        List<String> imageIds = market.getImages().stream().map(item -> item.getId()).collect(Collectors.toList());
         // 保存图片关联（如果有）
-
 
         if (imageIds != null && !imageIds.isEmpty()) {
             saveImages(market.getCode(), imageIds, currentUserId);
@@ -96,12 +94,22 @@ public class MarketService {
     }
 
     /**
-     * 更新车位
+     * 更新车位（带用户权限验证）
      */
     @Transactional(rollbackFor = Exception.class)
-    public void update(Market market) {
+    public void update(Market market, Integer currentUserId) {
         if (market == null || market.getId() == null) {
             throw new IllegalArgumentException("更新时ID不能为空");
+        }
+
+        // 权限验证：只能更新自己发布的车位
+        Market existing = marketMapper.getDetailById(market.getId());
+        if (existing == null) {
+            throw new IllegalArgumentException("车位信息不存在");
+        }
+
+        if (!existing.getUserId().equals(currentUserId)) {
+            throw new IllegalArgumentException("无权限修改此车位信息");
         }
 
         int rows = marketMapper.update(market);
@@ -144,12 +152,10 @@ public class MarketService {
 
         Market market = marketMapper.getDetailById(id);
         if (market == null) {
-            return null;  // 或抛异常，由 Controller 处理
+            return null; // 或抛异常，由 Controller 处理
         }
 
-
-
-        fillImages(market);  // 单条填充
+        fillImages(market); // 单条填充
 
         return market;
     }
@@ -206,7 +212,11 @@ public class MarketService {
      * 单条填充图片（详情查询用，兼容）
      */
     private void fillImages(Market market) {
-        if (market == null || !StringUtils.hasText(market.getCode())) {
+        if (market == null) {
+            return;
+        }
+
+        if (!StringUtils.hasText(market.getCode())) {
             market.setImages(new ArrayList<>());
             return;
         }

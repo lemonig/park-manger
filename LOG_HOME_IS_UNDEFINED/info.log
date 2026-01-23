@@ -1,0 +1,18 @@
+2026-01-23 11:33:29.365 [restartedMain] INFO  com.ldz.park.ParkApplication - Starting ParkApplication using Java 21.0.2 with PID 18028 (G:\个人项目\2023年\park\target\classes started by Administrator in G:\个人项目\2023年\park)
+2026-01-23 11:33:29.367 [restartedMain] INFO  com.ldz.park.ParkApplication - No active profile set, falling back to 1 default profile: "default"
+2026-01-23 11:33:31.369 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-01-23 11:33:31.369 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-01-23 11:33:31.413 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 44 ms. Found 0 Redis repository interfaces.
+2026-01-23 11:33:32.262 [restartedMain] INFO  o.s.b.w.e.j.JettyServletWebServerFactory - Server initialized with port: 8080
+2026-01-23 11:33:32.262 [restartedMain] INFO  org.eclipse.jetty.server.Server - jetty-12.0.6; built: 2024-01-30T02:43:24.387Z; git: 78ab6e6ba163f89cdd97f2ae0283fbb5e371cfaf; jvm 21.0.2+13-LTS-58
+2026-01-23 11:33:32.265 [restartedMain] INFO  o.e.j.s.h.ContextHandler.application - Initializing Spring embedded WebApplicationContext
+2026-01-23 11:33:32.265 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2874 ms
+2026-01-23 11:33:32.295 [restartedMain] INFO  o.e.j.s.DefaultSessionIdManager - Session workerName=node0
+2026-01-23 11:33:32.306 [restartedMain] INFO  o.e.j.server.handler.ContextHandler - Started osbwej.JettyEmbeddedWebAppContext@16315a20{application,/,b=[file:/C:/Users/Administrator/AppData/Local/Temp/jetty-docbase.8080.2344494799020616452/, jar:file:///E:/maven/apache-maven-3.9.7/resp/org/webjars/swagger-ui/5.10.3/swagger-ui-5.10.3.jar!/META-INF/resources/],a=AVAILABLE,h=oeje10s.SessionHandler@36604dd1{STARTED}}
+2026-01-23 11:33:32.307 [restartedMain] INFO  o.e.j.e.s.ServletContextHandler - Started osbwej.JettyEmbeddedWebAppContext@16315a20{application,/,b=[file:/C:/Users/Administrator/AppData/Local/Temp/jetty-docbase.8080.2344494799020616452/, jar:file:///E:/maven/apache-maven-3.9.7/resp/org/webjars/swagger-ui/5.10.3/swagger-ui-5.10.3.jar!/META-INF/resources/],a=AVAILABLE,h=oeje10s.SessionHandler@36604dd1{STARTED}}
+2026-01-23 11:33:32.307 [restartedMain] INFO  org.eclipse.jetty.server.Server - Started oejs.Server@61a7515{STARTING}[12.0.6,sto=0] @298716ms
+2026-01-23 11:33:35.290 [restartedMain] INFO  org.eclipse.jetty.server.Server - Stopped oejs.Server@61a7515{STOPPING}[12.0.6,sto=0]
+2026-01-23 11:33:35.295 [restartedMain] INFO  o.e.j.e.s.ServletContextHandler - Stopped osbwej.JettyEmbeddedWebAppContext@16315a20{application,/,b=[file:/C:/Users/Administrator/AppData/Local/Temp/jetty-docbase.8080.2344494799020616452/, jar:file:///E:/maven/apache-maven-3.9.7/resp/org/webjars/swagger-ui/5.10.3/swagger-ui-5.10.3.jar!/META-INF/resources/],a=AVAILABLE,h=oeje10s.SessionHandler@36604dd1{STOPPED}}
+2026-01-23 11:33:35.323 [restartedMain] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
