@@ -28,7 +28,17 @@ public class UserSecurityInterceptor implements HandlerInterceptor {
             Object handler
     ) throws Exception {
 
-        String token = request.getHeader("token");
+        // 从标准的 Authorization header 获取 token，支持 Bearer 前缀
+        String authHeader = request.getHeader("Authorization");
+        String token = null;
+        if (authHeader != null) {
+            if (authHeader.startsWith("Bearer ")) {
+                token = authHeader.substring(7); // 去掉 "Bearer " 前缀
+            } else {
+                token = authHeader; // 兼容没有 Bearer 前缀的情况
+            }
+        }
+        
         if (isUserAuthenticated(token)) {
             return true;
         }

@@ -8,7 +8,7 @@
         <result column="code" jdbcType="VARCHAR" property="code"/>
         <result column="owner_id" jdbcType="INTEGER" property="ownerId"/>
         <result column="price" jdbcType="NUMERIC" property="price"/>
-        <result column="number" jdbcType="VARCHAR" property="parkingNo"/>  <!-- 假设属性 parkingNo -->
+        <result column="parking_no" jdbcType="VARCHAR" property="parkingNo"/>
         <result column="photo" jdbcType="VARCHAR" property="photo" typeHandler="com.ldz.park.util.ListHandler"/>
         <result column="description" jdbcType="VARCHAR" property="description"/>
         <result column="type" jdbcType="INTEGER" property="type"/>
