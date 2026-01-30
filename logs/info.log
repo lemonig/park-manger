@@ -1,6 +1,0 @@
-2026-01-26 22:43:47.943 [SpringApplicationShutdownHook] INFO  o.e.jetty.server.AbstractConnector - Stopped ServerConnector@6e36d5d7{HTTP/1.1, (http/1.1)}{0.0.0.0:3429}
-2026-01-26 22:43:47.962 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown initiated...
-2026-01-26 22:43:47.962 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - ServerHikariCP - Shutdown completed.
-2026-01-26 22:43:47.963 [SpringApplicationShutdownHook] INFO  org.eclipse.jetty.server.Server - Stopped oejs.Server@7924ba46{STOPPING}[12.0.6,sto=0]
-2026-01-26 22:43:47.966 [SpringApplicationShutdownHook] INFO  o.e.j.s.h.ContextHandler.application - Destroying Spring FrameworkServlet 'dispatcherServlet'
-2026-01-26 22:43:47.968 [SpringApplicationShutdownHook] INFO  o.e.j.e.s.ServletContextHandler - Stopped osbwej.JettyEmbeddedWebAppContext@55c38779{application,/,b=[file:/private/var/folders/8s/svqgy8zx1w90pv0njznnjl400000gn/T/jetty-docbase.3429.6824424585782241082/, jar:file:///Volumes/jonny/tool/maven/maven-3.9.10-repo/org/webjars/swagger-ui/5.10.3/swagger-ui-5.10.3.jar!/META-INF/resources/],a=AVAILABLE,h=oeje10s.SessionHandler@3f60656b{STOPPED}}
