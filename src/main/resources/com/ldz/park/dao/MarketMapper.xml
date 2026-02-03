@@ -2,14 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ldz.park.dao.MarketMapper">
 
-    <!-- 基础结果映射（优化：列名与属性驼峰映射一致，photo 用 ListHandler 保留） -->
+    <!-- 基础结果映射（列名与属性驼峰映射一致） -->
     <resultMap id="BaseResultMap" type="com.ldz.park.model.Market">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="code" jdbcType="VARCHAR" property="code"/>
-        <result column="owner_id" jdbcType="INTEGER" property="ownerId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="price" jdbcType="NUMERIC" property="price"/>
         <result column="parking_no" jdbcType="VARCHAR" property="parkingNo"/>
-        <result column="photo" jdbcType="VARCHAR" property="photo" typeHandler="com.ldz.park.util.ListHandler"/>
         <result column="description" jdbcType="VARCHAR" property="description"/>
         <result column="type" jdbcType="INTEGER" property="type"/>
         <result column="position_desc" jdbcType="VARCHAR" property="positionDesc"/>
@@ -45,21 +44,20 @@
     <!-- 新增 -->
     <insert id="add" parameterType="com.ldz.park.model.Market" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         INSERT INTO market
-        (code, owner_id, price, number, description, type, position_desc, specs, phone, status, gmt_create, gmt_modify)
+        (code, user_id, price, parking_no, description, type, position_desc, specs, phone, status, gmt_create, gmt_modify)
         VALUES
-        (#{code}, #{ownerId}, #{price}, #{parkingNo}, #{description}, #{type}, #{positionDesc}, #{specs}, #{phone}, #{status}, NOW(), NOW())
+        (#{code}, #{userId}, #{price}, #{parkingNo}, #{description}, #{type}, #{positionDesc}, #{specs}, #{phone}, #{status}, NOW(), NOW())
     </insert>
 
     <!-- 更新 -->
     <update id="update" parameterType="com.ldz.park.model.Market">
         UPDATE market
         <set>
-            <if test="ownerId != null">owner_id = #{ownerId},</if>
             <if test="price != null">price = #{price},</if>
-            <if test="parkingNo != null">number = #{parkingNo},</if>
+            <if test="parkingNo != null">parking_no = #{parkingNo},</if>
             <if test="description != null">description = #{description},</if>
             <if test="type != null">type = #{type},</if>
-            <if test="positionDesc != null">position_desc = #{positionDesc},</if>
+--             <if test="positionDesc != null">position_desc = #{positionDesc},</if>
             <if test="specs != null">specs = #{specs},</if>
             <if test="phone != null">phone = #{phone},</if>
             <if test="status != null">status = #{status},</if>
@@ -69,12 +67,12 @@
     </update>
 
     <!-- 删除 -->
-    <delete id="delete" parameterType="java.lang.Integer">
+    <delete id="delete" parameterType="java.lang.Long">
         DELETE FROM market WHERE id = #{id}
     </delete>
 
     <!-- 详情查询 -->
-    <select id="getDetailById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    <select id="getDetailById" resultMap="BaseResultMap" parameterType="java.lang.Long">
         SELECT * FROM market WHERE id = #{id}
     </select>
 

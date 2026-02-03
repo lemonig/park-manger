@@ -154,7 +154,7 @@ public class MarketController {
             return ApiResponse.error(401, "用户身份验证失败");
         }
 
-        marketService.update(market, currentUserId);
+        marketService.update(market);
         return ApiResponse.success("车位信息更新成功", null);
     }
 

@@ -97,7 +97,7 @@ public class MarketService {
      * 更新车位（带用户权限验证）
      */
     @Transactional(rollbackFor = Exception.class)
-    public void update(Market market, Integer currentUserId) {
+    public void update(Market market) {
         if (market == null || market.getId() == null) {
             throw new IllegalArgumentException("更新时ID不能为空");
         }
@@ -107,10 +107,10 @@ public class MarketService {
         if (existing == null) {
             throw new IllegalArgumentException("车位信息不存在");
         }
-
-        if (!existing.getUserId().equals(currentUserId)) {
-            throw new IllegalArgumentException("无权限修改此车位信息");
-        }
+            //TODO更新车位需要 验证本人ID吗
+//        if (!existing.getUserId().equals(currentUserId)) {
+//            throw new IllegalArgumentException("无权限修改此车位信息");
+//        }
 
         int rows = marketMapper.update(market);
         if (rows == 0) {
