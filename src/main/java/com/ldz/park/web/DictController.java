@@ -58,9 +58,9 @@ public class DictController {
 
     @Operation(summary = "字典项列表")
     @PostMapping("/item/list")
-    public ApiResponse<List<DictItem>> listItems(@RequestBody(required = false) DictItem dictItem) {
-        String typeCode = dictItem == null ? null : dictItem.getTypeCode();
-        return ApiResponse.success(dictService.listItems(typeCode));
+    public ApiResponse<List<DictItem>> listItems(@RequestBody(required = false) DictType dictType) {
+        Long typeId = dictType == null ? null : dictType.getId();
+        return ApiResponse.success(dictService.listItemsByTypeId(typeId));
     }
     @Operation(summary = "新增字典项")
     @PostMapping("/item")
