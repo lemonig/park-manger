@@ -8,7 +8,7 @@ on:
 
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  IMAGE_NAME: spring-boot-backend   # ← 这里可以改成你喜欢的镜像名（建议小写 + 连字符）
+  IMAGE_NAME: park-java   # ← 这里可以改成你喜欢的镜像名（建议小写 + 连字符）
 
 jobs:
   build-and-push:
