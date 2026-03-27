@@ -1,4 +1,4 @@
-name: Build and Push Spring Boot to Docker Hub
+name: park-java
 
 on:
   push:
