@@ -13,6 +13,18 @@ public interface UserMapper {
 
     User getUserByAccount(String account);
 
+    User getUserByMobile(@Param("mobile") String mobile);
+
+    User detail(@Param("id") Integer id);
+
+    void add(@Param("user") User user);
+
+    void update(@Param("user") User user);
+
+    void delete(@Param("id") Integer id);
+
+    void resetPassword(@Param("id") Integer id, @Param("password") String password);
+
     void insertToken(@Param("userId") Integer userId, @Param("token") String token);
 
 //    void deleteFailUser(@Param("user_name") String user_name);

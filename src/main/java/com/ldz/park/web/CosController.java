@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigInteger;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -23,29 +23,42 @@ public class CosController {
     private final FileRecordService fileRecordService;
 
     @PostMapping("/upload")
-    public ApiResponse upload(@RequestParam MultipartFile file) throws IOException {
-        String fileId = UUID.randomUUID().toString();
-        ApiResponse apiResponse = new ApiResponse();
+    public ApiResponse upload(@RequestParam("file") MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty()) {
+            return ApiResponse.badRequest("请选择上传文件");
+        }
 
+        String fileId = UUID.randomUUID().toString();
         String url = cosService.uploadFile(file);
-        String originalFilename = file.getOriginalFilename(); // 原始文件名（例如 "image.jpg"）
-        Long size = file.getSize();             // 文件大小（单位：字节）
-        String contentType  = file.getContentType();      // MIME 类型（例如 "image/png"）
-        String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || originalFilename.isBlank()) {
+            originalFilename = "file";
+        }
+        Long size = file.getSize();
+        String contentType = file.getContentType();
+        String extension = "";
+        int dotIndex = originalFilename.lastIndexOf(".");
+        if (dotIndex >= 0 && dotIndex < originalFilename.length() - 1) {
+            extension = originalFilename.substring(dotIndex + 1);
+        }
 
         FileRecord fileRecord = new FileRecord();
         fileRecord.setId(fileId);
         fileRecord.setUrl(url);
         fileRecord.setExt(extension);
         fileRecord.setSize(size);
+        fileRecord.setFilename(originalFilename);
+        fileRecord.setOriginalFilename(originalFilename);
         fileRecord.setContentType(contentType);
+        Date now = new Date();
+        fileRecord.setCreateTime(now);
+        fileRecord.setUpdateTime(now);
         fileRecordService.insert(fileRecord);
 
         HashMap<String, String> map = new HashMap<>();
         map.put("url", url);
-        map.put("id",fileId);
-        apiResponse.setData(map);
-         return apiResponse;
+        map.put("id", fileId);
+        return ApiResponse.success(map);
     }
 
     @DeleteMapping("/delete")

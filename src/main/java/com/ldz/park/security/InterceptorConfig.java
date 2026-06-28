@@ -21,6 +21,7 @@ public class InterceptorConfig implements  WebMvcConfigurer  {
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/api/login",
+                        "/api/wx-login",
                         "/api/register",
                         "/favicon.ico",
 

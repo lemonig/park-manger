@@ -7,7 +7,10 @@
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="account" jdbcType="VARCHAR" property="account"/>
         <result column="doorplate" jdbcType="VARCHAR" property="doorplate"/>
-         <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="is_admin" jdbcType="TINYINT" property="isAdmin"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
         <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
         <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify"/>
         <result column="gmt_active" jdbcType="TIMESTAMP" property="gmtActive"/>
@@ -19,7 +22,7 @@
     </select>
 
     <select id="getUserList" resultMap="BaseResultMap">
-        select id, name,account, doorplate,mobile ,gmt_active from user
+        select id, name,account, doorplate,mobile ,is_admin,gmt_active from user
         <if test="keyword != null">
             <bind name="pattern" value="'%' + keyword + '%'"/>
             where (account like #{pattern} or name like#{pattern} )
@@ -32,6 +35,42 @@
         select * from user where account = #{0}
     </select>
 
+    <select id="getUserByMobile" resultMap="BaseResultMap">
+        select * from user where mobile = #{mobile} limit 1
+    </select>
+
+    <select id="detail" resultMap="BaseResultMap">
+        select * from user where id = #{id}
+    </select>
+
+    <insert id="add">
+        insert into user (name, doorplate, account, password, is_admin, mobile, avatar, description, gmt_create, gmt_modify)
+        values (#{user.name}, #{user.doorplate}, #{user.account}, #{user.password}, #{user.isAdmin}, #{user.mobile}, #{user.avatar}, #{user.description}, now(), now())
+    </insert>
+
+    <update id="update">
+        update user
+        <set>
+            <if test="user.name != null">name = #{user.name},</if>
+            <if test="user.doorplate != null">doorplate = #{user.doorplate},</if>
+            <if test="user.account != null">account = #{user.account},</if>
+            <if test="user.password != null and user.password != ''">password = #{user.password},</if>
+            <if test="user.isAdmin != null">is_admin = #{user.isAdmin},</if>
+            <if test="user.mobile != null">mobile = #{user.mobile},</if>
+            <if test="user.avatar != null">avatar = #{user.avatar},</if>
+            <if test="user.description != null">description = #{user.description},</if>
+            gmt_modify = now()
+        </set>
+        where id = #{user.id}
+    </update>
+
+    <delete id="delete">
+        delete from user where id = #{id}
+    </delete>
+
+    <update id="resetPassword">
+        update user set password = #{password}, gmt_modify = now() where id = #{id}
+    </update>
 
     <insert id="insertToken">
         insert into user_login (user_id, token) values (#{userId}, #{token})
