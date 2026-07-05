@@ -3,7 +3,6 @@ package com.ldz.park.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ldz.park.dao.UserMapper;
-import com.ldz.park.model.SearchForm;
 import com.ldz.park.model.User;
 import com.ldz.park.model.domain.LogLogin;
 import com.ldz.park.model.meta.ApiResponse;
@@ -11,7 +10,6 @@ import com.ldz.park.model.meta.ServerException;
 import com.ldz.park.model.request.LoginForm;
 import com.ldz.park.model.vo.SimpleUser;
 import com.ldz.park.util.JwtUtil;
-import com.ldz.park.util.TokenHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,6 +27,9 @@ public class UserService {
     private JwtUtil jwtUtil;
 
     @Autowired
+    private AuthTokenService authTokenService;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     @Value("${WECHAT_MINIAPP_APP_ID:}")
@@ -41,13 +42,6 @@ public class UserService {
         return userMapper.getListAll();
     }
 
-    // public ApiResponse getUserList(SearchForm form){
-    // ApiResponse apiResponse= new ApiResponse();
-    // List<User> list= userMapper.getUserList(form);
-    // apiResponse.setData(list);
-    // return apiResponse;
-    // }
-
     public SimpleUser login(String account) {
         User user = userMapper.getUserByAccount(account);
         LogLogin log = new LogLogin();
@@ -55,34 +49,78 @@ public class UserService {
         log.setNickname(user.getName());
         log.setChannel(1);
         log.setType(1);
-        String token = jwtUtil.generateToken(user.getId());
+        if (user.getRole() == null || user.getRole().isBlank()) {
+            user.setRole(user.getIsAdmin() != null && user.getIsAdmin() == 1 ? "admin" : "user");
+        }
+        String token = authTokenService.issueAdminToken(user);
         return new SimpleUser().fromUser(user, token);
     }
 
-    public SimpleUser wxLogin(LoginForm loginForm) {
-        String account = resolveWechatAccount(loginForm.getCode());
+    /**
+     * 小程序登录/续期：通过 code 换 openid，查/建用户，返回带 token 的用户信息。
+     * 若请求带旧 token，则先将旧 jti 拉黑，避免并存。
+     */
+    public SimpleUser miniLogin(LoginForm loginForm) {
+        String openid = resolveWechatOpenid(loginForm.getCode());
         String mobile = loginForm.getMobile();
         String name = loginForm.getName();
-        User user = userMapper.getUserByAccount(account);
+
+        User user = userMapper.getUserByOpenid(openid);
+        if (user == null) {
+            User legacy = userMapper.getUserByAccount("wx_" + openid);
+            if (legacy != null) {
+                legacy.setOpenid(openid);
+                legacy.setChannel(JwtUtil.CHANNEL_MINI);
+                if (legacy.getRole() == null || legacy.getRole().isBlank()) {
+                    legacy.setRole("user");
+                }
+                userMapper.update(legacy);
+                user = legacy;
+            }
+        }
         if (user == null && mobile != null && !mobile.isBlank()) {
-            user = userMapper.getUserByMobile(mobile);
+            User byMobile = userMapper.getUserByMobile(mobile);
+            if (byMobile != null) {
+                byMobile.setOpenid(openid);
+                byMobile.setChannel(JwtUtil.CHANNEL_MINI);
+                if (byMobile.getRole() == null || byMobile.getRole().isBlank()) {
+                    byMobile.setRole("user");
+                }
+                userMapper.update(byMobile);
+                user = byMobile;
+            }
         }
         if (user == null) {
             user = new User();
-            user.setAccount(account);
+            user.setAccount("wx_" + openid);
+            user.setOpenid(openid);
             user.setName(name == null || name.isBlank() ? "微信用户" : name);
             user.setDoorplate("");
             user.setPassword("123456");
             user.setIsAdmin(0);
+            user.setChannel(JwtUtil.CHANNEL_MINI);
+            user.setRole("user");
             user.setMobile(mobile);
             userMapper.add(user);
-            user = userMapper.getUserByAccount(account);
+            if (user.getId() == null) {
+                user = userMapper.getUserByOpenid(openid);
+            }
         }
-        String token = jwtUtil.generateToken(user.getId());
+
+        authTokenService.revokeIfPresent(loginForm.getToken());
+
+        String token = authTokenService.issueMiniToken(user);
         return new SimpleUser().fromUser(user, token);
     }
 
-    private String resolveWechatAccount(String code) {
+    /**
+     * 老接口 wxLogin 保留，内部转调 miniLogin。
+     */
+    public SimpleUser wxLogin(LoginForm loginForm) {
+        return miniLogin(loginForm);
+    }
+
+    private String resolveWechatOpenid(String code) {
         if (wechatAppId == null || wechatAppId.isBlank() || wechatSecret == null || wechatSecret.isBlank()) {
             throw new ServerException("WECHAT_CONFIG_ERROR", "微信登录未配置");
         }
@@ -102,20 +140,13 @@ public class UserService {
             if (openid.isBlank()) {
                 throw new ServerException("WECHAT_LOGIN_ERROR", "微信登录失败");
             }
-            return "wx_" + openid;
+            return openid;
         } catch (ServerException e) {
             throw e;
         } catch (Exception e) {
             throw new ServerException("WECHAT_LOGIN_ERROR", "微信登录失败");
         }
     }
-
-    // 已废弃，使用 JWT token 系统，不再需要此方法
-    // private SimpleUser getUserLoginResponse(User user) {
-    // String token = TokenHelper.getGUID();
-    // userMapper.insertToken(user.getId(), token);
-    // return new SimpleUser().fromUser(user, token);
-    // }
 
     public ApiResponse getListAll() {
         List<User> list = userMapper.getListAll();
@@ -142,12 +173,6 @@ public class UserService {
         userMapper.resetPassword(id, "123456");
     }
 
-    // public void deleteFailUser(String user_name) {
-    // userMapper.deleteFailUser(user_name);
-    // }
-
-    // 已废弃，现在使用 JWT token 系统，不再通过数据库验证 token
-    // 如需使用旧的 token 系统，请调用此方法
     @Deprecated
     public Integer getUserIdByToken(String token) {
         return userMapper.getUserIdByToken(token);

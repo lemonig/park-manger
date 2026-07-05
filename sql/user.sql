@@ -1,0 +1,21 @@
+CREATE TABLE `user` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `doorplate` varchar(50) NOT NULL,
+  `account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '账号',
+  `openid` varchar(64) DEFAULT NULL COMMENT '微信小程序 openid',
+  `unionid` varchar(64) DEFAULT NULL COMMENT '微信 unionid',
+  `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '123456',
+  `is_admin` tinyint NOT NULL DEFAULT '0' COMMENT '是否超级管理员',
+  `channel` varchar(16) NOT NULL DEFAULT 'admin' COMMENT '来源渠道 mini/admin',
+  `role` varchar(32) NOT NULL DEFAULT 'user' COMMENT '业务角色 user/admin',
+  `mobile` varchar(20) DEFAULT NULL,
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '头像',
+  `description` varchar(255) DEFAULT NULL,
+  `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `gmt_modify` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `gmt_active` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_account` (`account`),
+  UNIQUE KEY `uk_openid` (`openid`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

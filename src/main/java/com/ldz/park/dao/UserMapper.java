@@ -13,6 +13,8 @@ public interface UserMapper {
 
     User getUserByAccount(String account);
 
+    User getUserByOpenid(@Param("openid") String openid);
+
     User getUserByMobile(@Param("mobile") String mobile);
 
     User detail(@Param("id") Integer id);

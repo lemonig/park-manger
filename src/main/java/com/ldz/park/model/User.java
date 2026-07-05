@@ -13,7 +13,12 @@ public class User implements Serializable {
     private String name;
     private String doorplate;
     private String account;
+    private String openid;
+    private String unionid;
     private String password;
+    private Integer isAdmin;
+    private String channel;
+    private String role;
 
     private String mobile;
     private String avatar;

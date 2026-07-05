@@ -28,4 +28,7 @@ public class LoginForm extends AbstractRequest {
 
     @Schema(description = "手机号（部分场景下与 account 一致，可冗余传入）", example = "18296325871")
     private String mobile;
+
+    @Schema(description = "旧 token（小程序登录/续期时可携带，用于将旧 jti 拉黑）")
+    private String token;
 }
