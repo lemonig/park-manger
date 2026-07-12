@@ -13,6 +13,7 @@ public class DictType {
     private String name;
     private String description;
     private Integer status;
+    private Long itemCount;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 }

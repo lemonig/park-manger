@@ -25,9 +25,7 @@
         <result column="object_type" property="objectType"/>
         <result column="attr" property="attr"/>
         <result column="create_time" property="createTime"/>
-        <result column="create_by" property="createBy"/>
         <result column="update_time" property="updateTime"/>
-        <result column="update_by" property="updateBy"/>
     </resultMap>
 
 
@@ -41,11 +39,11 @@
         INSERT INTO images (
             id, url, size, filename, original_filename, base_path, path, ext,
             content_type, platform, th_url, th_filename, th_size, th_content_type,
-            object_id, object_type, attr, create_time, create_by, update_time, update_by
+            object_id, object_type, attr, create_time, update_time
         ) VALUES (
                      #{id}, #{url}, #{size}, #{filename}, #{originalFilename}, #{basePath}, #{path}, #{ext},
                      #{contentType}, #{platform}, #{thUrl}, #{thFilename}, #{thSize}, #{thContentType},
-                     #{objectId}, #{objectType}, #{attr}, #{createTime}, #{createBy}, #{updateTime}, #{updateBy}
+                     #{objectId}, #{objectType}, #{attr}, #{createTime}, #{updateTime}
                  )
     </insert>
 
@@ -70,9 +68,7 @@
             object_type = #{objectType},
             attr = #{attr},
             create_time = #{createTime},
-            create_by = #{createBy},
-            update_time = #{updateTime},
-            update_by = #{updateBy}
+            update_time = #{updateTime}
         WHERE id = #{id}
     </update>
 

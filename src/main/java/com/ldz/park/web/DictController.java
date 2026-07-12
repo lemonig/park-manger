@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "字典管理", description = "字典类型与字典项接口")
+@Deprecated
+@Tag(name = "字典管理（已废弃，请使用 /api/wechat/dict/** 或 /api/admin/dict/**）", description = "字典类型与字典项接口")
 @RestController
 @RequestMapping("/api/dict")
 @RequiredArgsConstructor
@@ -58,9 +59,9 @@ public class DictController {
 
     @Operation(summary = "字典项列表")
     @PostMapping("/item/list")
-    public ApiResponse<List<DictItem>> listItems(@RequestBody(required = false) DictType dictType) {
-        Long typeId = dictType == null ? null : dictType.getId();
-        return ApiResponse.success(dictService.listItemsByTypeId(typeId));
+    public ApiResponse<List<DictItem>> listItems(@RequestBody(required = false) DictItem dictItem) {
+        String typeCode = dictItem == null ? null : dictItem.getTypeCode();
+        return ApiResponse.success(dictService.listItemsByTypeCode(typeCode));
     }
     @Operation(summary = "新增字典项")
     @PostMapping("/item")

@@ -9,7 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "车位管理", description = "车位相关接口")
+@Deprecated
+@Tag(name = "车位管理（已废弃，前端未使用）", description = "车位相关接口")
 @RestController
 @RequestMapping("/api/carport")
 public class CarportController {

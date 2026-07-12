@@ -8,13 +8,16 @@
         <result column="name" property="name" jdbcType="VARCHAR"/>
         <result column="description" property="description" jdbcType="VARCHAR"/>
         <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="item_count" property="itemCount" jdbcType="BIGINT"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <select id="list" resultMap="BaseResultMap">
-        select * from dict_type
-        order by create_time desc, id desc
+        select dt.*,
+               (select count(1) from dict_item di where di.type_code = dt.code) as item_count
+        from dict_type dt
+        order by dt.create_time desc, dt.id desc
     </select>
 
     <select id="detail" resultMap="BaseResultMap">

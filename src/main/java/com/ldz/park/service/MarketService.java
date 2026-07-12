@@ -66,6 +66,95 @@ public class MarketService {
     }
 
     /**
+     * 小程序端列表：只查已审核通过（status=1），未指定 status 时强制加过滤。
+     */
+    public PageInfo<Market> listPublished(Market query, int pageNum, int pageSize) {
+        Market cond = query == null ? new Market() : query;
+        cond.setStatus(1);
+        return list(cond, pageNum, pageSize);
+    }
+
+    /**
+     * 我发布的车位列表（不限 status）。
+     */
+    public PageInfo<Market> listByUser(Integer userId, Market query, int pageNum, int pageSize) {
+        if (userId == null) {
+            throw new IllegalArgumentException("用户ID不能为空");
+        }
+        Market cond = query == null ? new Market() : query;
+        cond.setUserId(userId);
+        return list(cond, pageNum, pageSize);
+    }
+
+    /**
+     * 小程序：更新自己发布的车位（校验归属）。
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateByOwner(Market market, Integer currentUserId) {
+        if (market == null || market.getId() == null) {
+            throw new IllegalArgumentException("更新时ID不能为空");
+        }
+        if (currentUserId == null) {
+            throw new IllegalArgumentException("用户身份验证失败");
+        }
+        Market existing = marketMapper.getDetailById(market.getId());
+        if (existing == null) {
+            throw new IllegalArgumentException("车位信息不存在");
+        }
+        if (existing.getUserId() == null || !existing.getUserId().equals(currentUserId)) {
+            throw new IllegalArgumentException("无权限修改此车位信息");
+        }
+        // 强制以现有 userId 为准，防止越权
+        market.setUserId(existing.getUserId());
+        update(market);
+    }
+
+    /**
+     * 小程序：删除自己发布的车位（校验归属）。
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteByOwner(Long id, Integer currentUserId) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID不能为空");
+        }
+        if (currentUserId == null) {
+            throw new IllegalArgumentException("用户身份验证失败");
+        }
+        Market existing = marketMapper.getDetailById(id);
+        if (existing == null) {
+            throw new IllegalArgumentException("车位信息不存在");
+        }
+        if (existing.getUserId() == null || !existing.getUserId().equals(currentUserId)) {
+            throw new IllegalArgumentException("无权限删除此车位信息");
+        }
+        delete(id);
+    }
+
+    /**
+     * 审核（后台专用）：修改 status 与审核时间。
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void audit(Long id, Integer status) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID不能为空");
+        }
+        if (status == null || (status != 1 && status != 2)) {
+            throw new IllegalArgumentException("审核状态非法（1=通过，2=拒绝）");
+        }
+        Market existing = marketMapper.getDetailById(id);
+        if (existing == null) {
+            throw new IllegalArgumentException("车位信息不存在");
+        }
+        Market patch = new Market();
+        patch.setId(id);
+        patch.setStatus(status);
+        if (status == 1) {
+            patch.setAuditTime(java.time.LocalDateTime.now());
+        }
+        marketMapper.update(patch);
+    }
+
+    /**
      * 新增车位（含图片批量保存）
      */
     @Transactional(rollbackFor = Exception.class)
@@ -85,11 +174,14 @@ public class MarketService {
         }
 
         marketMapper.add(market);
-        List<String> imageIds = market.getImages().stream().map(item -> item.getId()).collect(Collectors.toList());
-        // 保存图片关联（如果有）
-
-        if (imageIds != null && !imageIds.isEmpty()) {
-            saveImages(market.getCode(), imageIds, currentUserId);
+        if (market.getImages() != null && !market.getImages().isEmpty()) {
+            List<String> imageIds = market.getImages().stream()
+                    .map(SimpleImage::getId)
+                    .filter(StringUtils::hasText)
+                    .collect(Collectors.toList());
+            if (!imageIds.isEmpty()) {
+                saveImages(market.getCode(), imageIds, currentUserId);
+            }
         }
     }
 
@@ -115,6 +207,17 @@ public class MarketService {
         int rows = marketMapper.update(market);
         if (rows == 0) {
             throw new IllegalArgumentException("车位信息不存在或已删除");
+        }
+
+        if (market.getImages() != null) {
+            marketMapper.deleteImagesByMarketCode(existing.getCode());
+            List<String> imageIds = market.getImages().stream()
+                    .map(SimpleImage::getId)
+                    .filter(StringUtils::hasText)
+                    .collect(Collectors.toList());
+            if (!imageIds.isEmpty()) {
+                saveImages(existing.getCode(), imageIds, existing.getUserId());
+            }
         }
     }
 

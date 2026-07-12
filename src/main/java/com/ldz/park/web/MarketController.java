@@ -36,7 +36,8 @@ import java.util.List;
  * 7. 代码结构清晰、可维护、扩展性强（后期加权限、日志、图片处理）。
  * 8. 移除无用 import（如 HttpServletRequest、UUID）。
  */
-@Tag(name = "车位租售管理 API")
+@Deprecated
+@Tag(name = "车位租售管理 API（已废弃，请使用 /api/wechat/market/** 或 /api/admin/market/**）")
 @RestController
 @RequestMapping("/api/market")
 public class MarketController {

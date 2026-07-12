@@ -1,4 +1,4 @@
-package com.ldz.park.web;
+package com.ldz.park.web.admin;
 
 import com.ldz.park.model.meta.ApiResponse;
 import com.ldz.park.model.request.LoginForm;
@@ -6,6 +6,9 @@ import com.ldz.park.model.vo.SimpleUser;
 import com.ldz.park.service.AuthTokenService;
 import com.ldz.park.service.UserService;
 import com.ldz.park.util.JwtUtil;
+import com.ldz.park.web.validator.user.UserLoginValidator;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,13 +16,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Deprecated
+@Tag(name = "后台管理 / 认证", description = "后台管理端登录、登出、强制下线")
 @RestController
-@RequestMapping(value = "/api/oauth")
-public class OAuthController {
+@RequestMapping("/api/admin/auth")
+public class AdminAuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserLoginValidator userLoginValidator;
 
     @Autowired
     private AuthTokenService authTokenService;
@@ -27,22 +33,14 @@ public class OAuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    /**
-     * 小程序统一登录/续期接口。
-     * - 请求体：{ code: 微信登录 code, token?: 旧 token }
-     * - 返回：新 token + 用户信息
-     */
-    @PostMapping("/mini/login")
-    public ApiResponse<SimpleUser> miniLogin(@RequestBody LoginForm loginForm) {
-        if (loginForm == null || loginForm.getCode() == null || loginForm.getCode().isBlank()) {
-            return ApiResponse.badRequest("微信登录凭证不能为空");
-        }
-        return ApiResponse.success(userService.miniLogin(loginForm));
+    @Operation(summary = "账号密码登录")
+    @PostMapping("/login")
+    public ApiResponse<SimpleUser> login(@RequestBody LoginForm loginForm) {
+        userLoginValidator.validate(loginForm);
+        return ApiResponse.success(userService.login(loginForm.getAccount()));
     }
 
-    /**
-     * 主动登出：把当前 token 的 jti 加入黑名单。
-     */
+    @Operation(summary = "登出")
     @PostMapping("/logout")
     public ApiResponse<Void> logout(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
@@ -59,10 +57,8 @@ public class OAuthController {
         return ApiResponse.ok();
     }
 
-    /**
-     * 后台强制下线：将某用户在指定 channel（默认 mini）下的当前 token 拉黑。
-     */
-    @PostMapping("/admin/force-logout")
+    @Operation(summary = "强制下线")
+    @PostMapping("/force-logout")
     public ApiResponse<Void> forceLogout(@RequestBody ForceLogoutForm form) {
         if (form == null || form.getUserId() == null) {
             return ApiResponse.badRequest("用户ID不能为空");

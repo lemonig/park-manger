@@ -78,6 +78,17 @@ public class UserSecurityInterceptor implements HandlerInterceptor {
                 return sendUnauthorizedResponse(request, response, "账号已在别处登录");
             }
 
+            // 前缀 vs channel 校验：/api/wechat/** 仅允许 mini；/api/admin/** 仅允许 admin
+            String path = request.getServletPath();
+            if (path != null) {
+                if (path.startsWith("/api/wechat/") && !JwtUtil.CHANNEL_MINI.equals(channel)) {
+                    return sendUnauthorizedResponse(request, response, "无权限访问小程序接口");
+                }
+                if (path.startsWith("/api/admin/") && !JwtUtil.CHANNEL_ADMIN.equals(channel)) {
+                    return sendUnauthorizedResponse(request, response, "无权限访问后台接口");
+                }
+            }
+
             request.setAttribute("userId", userId);
             request.setAttribute("channel", channel);
             if (openidObj != null) {

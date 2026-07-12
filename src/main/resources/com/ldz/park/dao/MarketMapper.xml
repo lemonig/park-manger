@@ -21,6 +21,7 @@
         <result column="city" jdbcType="VARCHAR" property="city"/>
         <result column="area" jdbcType="VARCHAR" property="area"/>
         <result column="community" jdbcType="VARCHAR" property="community"/>
+        <result column="buildings" jdbcType="VARCHAR" property="buildings"/>
     </resultMap>
 
     <!-- 动态条件列表查询（支持分页 + 条件） -->
@@ -31,7 +32,7 @@
                 AND type = #{type}
             </if>
             <if test="parkingNo != null and parkingNo != ''">
-                AND number LIKE CONCAT('%', #{parkingNo}, '%')
+                AND parking_no LIKE CONCAT('%', #{parkingNo}, '%')
             </if>
             <if test="status != null">
                 AND status = #{status}
@@ -44,9 +45,9 @@
     <!-- 新增 -->
     <insert id="add" parameterType="com.ldz.park.model.Market" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         INSERT INTO market
-        (code, user_id, price, parking_no, description, type, position_desc, specs, phone, status, gmt_create, gmt_modify)
+        (code, user_id, price, parking_no, description, type, position_desc, specs, phone, city, area, community, buildings, status, gmt_create, gmt_modify)
         VALUES
-        (#{code}, #{userId}, #{price}, #{parkingNo}, #{description}, #{type}, #{positionDesc}, #{specs}, #{phone}, #{status}, NOW(), NOW())
+        (#{code}, #{userId}, #{price}, #{parkingNo}, #{description}, #{type}, #{positionDesc}, #{specs}, #{phone}, #{city}, #{area}, #{community}, #{buildings}, #{status}, NOW(), NOW())
     </insert>
 
     <!-- 更新 -->
@@ -57,9 +58,13 @@
             <if test="parkingNo != null">parking_no = #{parkingNo},</if>
             <if test="description != null">description = #{description},</if>
             <if test="type != null">type = #{type},</if>
---             <if test="positionDesc != null">position_desc = #{positionDesc},</if>
+            <if test="positionDesc != null">position_desc = #{positionDesc},</if>
             <if test="specs != null">specs = #{specs},</if>
             <if test="phone != null">phone = #{phone},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="area != null">area = #{area},</if>
+            <if test="community != null">community = #{community},</if>
+            <if test="buildings != null">buildings = #{buildings},</if>
             <if test="status != null">status = #{status},</if>
             gmt_modify = NOW()
         </set>

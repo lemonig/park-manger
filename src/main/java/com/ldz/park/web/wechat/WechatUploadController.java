@@ -1,12 +1,16 @@
-package com.ldz.park.web;
+package com.ldz.park.web.wechat;
 
 import com.ldz.park.entity.FileRecord;
 import com.ldz.park.model.meta.ApiResponse;
 import com.ldz.park.service.CosService;
 import com.ldz.park.service.FileRecordService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -14,15 +18,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
-@Deprecated
+@Tag(name = "微信小程序 / 文件上传")
 @RestController
-@RequestMapping("/api/cos")
+@RequestMapping("/api/wechat")
 @RequiredArgsConstructor
-public class CosController {
+public class WechatUploadController {
 
     private final CosService cosService;
     private final FileRecordService fileRecordService;
 
+    @Operation(summary = "上传文件")
     @PostMapping("/upload")
     public ApiResponse upload(@RequestParam("file") MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) {
@@ -60,11 +65,5 @@ public class CosController {
         map.put("url", url);
         map.put("id", fileId);
         return ApiResponse.success(map);
-    }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> delete(@RequestParam String key) {
-        //cosService.deleteFile(key);
-        return ResponseEntity.ok("删除成功");
     }
 }

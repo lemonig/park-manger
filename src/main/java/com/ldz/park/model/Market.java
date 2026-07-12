@@ -106,6 +106,11 @@ public class Market {
     private String community;
 
     /**
+     * 靠近楼栋（dict_item.value，逗号分隔）
+     */
+    private String buildings;
+
+    /**
      * 类型：1=售卖，2=租赁
      */
     private Integer type;

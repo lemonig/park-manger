@@ -20,6 +20,10 @@ public class InterceptorConfig implements  WebMvcConfigurer  {
         registry.addInterceptor(userSecurityInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
+                        // 新版认证白名单
+                        "/api/wechat/auth/mini-login",
+                        "/api/admin/auth/login",
+                        // 兼容旧接口（迁移期）
                         "/api/login",
                         "/api/wx-login",
                         "/api/oauth/mini/login",

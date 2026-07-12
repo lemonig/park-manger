@@ -47,15 +47,8 @@ public class DictService {
 
     /* ===================== 字典项 ===================== */
 
-    public List<DictItem> listItemsByTypeId(Long typeId) {
-        if (typeId == null) {
-            return dictItemMapper.list(null);
-        }
-        DictType type = dictTypeMapper.detail(typeId);
-        if (type == null) {
-            return List.of();
-        }
-        return dictItemMapper.list(type.getCode());
+    public List<DictItem> listItemsByTypeCode(String typeCode) {
+        return dictItemMapper.list(typeCode);
     }
 
     public DictItem itemDetail(Long id) {

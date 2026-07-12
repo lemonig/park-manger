@@ -1,4 +1,4 @@
-package com.ldz.park.web;
+package com.ldz.park.web.wechat;
 
 import com.ldz.park.model.meta.ApiResponse;
 import com.ldz.park.model.request.LoginForm;
@@ -6,6 +6,8 @@ import com.ldz.park.model.vo.SimpleUser;
 import com.ldz.park.service.AuthTokenService;
 import com.ldz.park.service.UserService;
 import com.ldz.park.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Deprecated
+@Tag(name = "微信小程序 / 认证", description = "小程序端登录、续期、登出")
 @RestController
-@RequestMapping(value = "/api/oauth")
-public class OAuthController {
+@RequestMapping("/api/wechat/auth")
+public class WechatAuthController {
 
     @Autowired
     private UserService userService;
@@ -27,12 +29,8 @@ public class OAuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    /**
-     * 小程序统一登录/续期接口。
-     * - 请求体：{ code: 微信登录 code, token?: 旧 token }
-     * - 返回：新 token + 用户信息
-     */
-    @PostMapping("/mini/login")
+    @Operation(summary = "微信小程序静默登录/续期")
+    @PostMapping("/mini-login")
     public ApiResponse<SimpleUser> miniLogin(@RequestBody LoginForm loginForm) {
         if (loginForm == null || loginForm.getCode() == null || loginForm.getCode().isBlank()) {
             return ApiResponse.badRequest("微信登录凭证不能为空");
@@ -40,9 +38,7 @@ public class OAuthController {
         return ApiResponse.success(userService.miniLogin(loginForm));
     }
 
-    /**
-     * 主动登出：把当前 token 的 jti 加入黑名单。
-     */
+    @Operation(summary = "小程序主动登出")
     @PostMapping("/logout")
     public ApiResponse<Void> logout(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
@@ -57,40 +53,5 @@ public class OAuthController {
         } catch (Exception ignored) {
         }
         return ApiResponse.ok();
-    }
-
-    /**
-     * 后台强制下线：将某用户在指定 channel（默认 mini）下的当前 token 拉黑。
-     */
-    @PostMapping("/admin/force-logout")
-    public ApiResponse<Void> forceLogout(@RequestBody ForceLogoutForm form) {
-        if (form == null || form.getUserId() == null) {
-            return ApiResponse.badRequest("用户ID不能为空");
-        }
-        String channel = form.getChannel() == null || form.getChannel().isBlank()
-                ? JwtUtil.CHANNEL_MINI : form.getChannel();
-        authTokenService.forceLogout(form.getUserId(), channel, jwtUtil.getMiniTtl());
-        return ApiResponse.ok();
-    }
-
-    public static class ForceLogoutForm {
-        private Integer userId;
-        private String channel;
-
-        public Integer getUserId() {
-            return userId;
-        }
-
-        public void setUserId(Integer userId) {
-            this.userId = userId;
-        }
-
-        public String getChannel() {
-            return channel;
-        }
-
-        public void setChannel(String channel) {
-            this.channel = channel;
-        }
     }
 }
