@@ -69,13 +69,9 @@ public class UserSecurityInterceptor implements HandlerInterceptor {
             String channel = channelObj == null ? JwtUtil.CHANNEL_ADMIN : channelObj.toString();
             Object openidObj = claims.get("openid");
 
-            // 黑名单校验
+            // 黑名单校验（主动登出/被强制下线/被顶下线都会拉黑 jti）
             if (authTokenService.isBlacklisted(jti)) {
                 return sendUnauthorizedResponse(request, response, "登录已失效，请重新登录");
-            }
-            // 单点登录校验
-            if (!authTokenService.isCurrentToken(userId, channel, jti)) {
-                return sendUnauthorizedResponse(request, response, "账号已在别处登录");
             }
 
             // 前缀 vs channel 校验：/api/wechat/** 仅允许 mini；/api/admin/** 仅允许 admin

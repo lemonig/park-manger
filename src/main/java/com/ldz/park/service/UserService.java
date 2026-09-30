@@ -59,10 +59,10 @@ public class UserService {
     /**
      * 小程序登录/续期：通过 code 换 openid，查/建用户，返回带 token 的用户信息。
      * 若请求带旧 token，则先将旧 jti 拉黑，避免并存。
+     * 注：个人小程序不采集手机号，仅基于 openid 建立用户。
      */
     public SimpleUser miniLogin(LoginForm loginForm) {
         String openid = resolveWechatOpenid(loginForm.getCode());
-        String mobile = loginForm.getMobile();
         String name = loginForm.getName();
 
         User user = userMapper.getUserByOpenid(openid);
@@ -78,18 +78,6 @@ public class UserService {
                 user = legacy;
             }
         }
-        if (user == null && mobile != null && !mobile.isBlank()) {
-            User byMobile = userMapper.getUserByMobile(mobile);
-            if (byMobile != null) {
-                byMobile.setOpenid(openid);
-                byMobile.setChannel(JwtUtil.CHANNEL_MINI);
-                if (byMobile.getRole() == null || byMobile.getRole().isBlank()) {
-                    byMobile.setRole("user");
-                }
-                userMapper.update(byMobile);
-                user = byMobile;
-            }
-        }
         if (user == null) {
             user = new User();
             user.setAccount("wx_" + openid);
@@ -100,7 +88,6 @@ public class UserService {
             user.setIsAdmin(0);
             user.setChannel(JwtUtil.CHANNEL_MINI);
             user.setRole("user");
-            user.setMobile(mobile);
             userMapper.add(user);
             if (user.getId() == null) {
                 user = userMapper.getUserByOpenid(openid);
@@ -120,32 +107,50 @@ public class UserService {
         return miniLogin(loginForm);
     }
 
+    /**
+     * 调用微信 jscode2session 换取 openid，并对失败场景做细分。
+     * - 未配置 AppID/Secret       → WECHAT_CONFIG_ERROR
+     * - 微信接口网络异常          → WECHAT_NETWORK_ERROR
+     * - code 无效/已使用/过期     → WECHAT_LOGIN_ERROR（附微信 errmsg）
+     * - 返回无 openid             → WECHAT_LOGIN_ERROR（兜底）
+     */
     private String resolveWechatOpenid(String code) {
         if (wechatAppId == null || wechatAppId.isBlank() || wechatSecret == null || wechatSecret.isBlank()) {
             throw new ServerException("WECHAT_CONFIG_ERROR", "微信登录未配置");
         }
+        String url = UriComponentsBuilder.fromUriString("https://api.weixin.qq.com/sns/jscode2session")
+                .queryParam("appid", wechatAppId)
+                .queryParam("secret", wechatSecret)
+                .queryParam("js_code", code)
+                .queryParam("grant_type", "authorization_code")
+                .toUriString();
+        String response;
         try {
-            String url = UriComponentsBuilder.fromUriString("https://api.weixin.qq.com/sns/jscode2session")
-                    .queryParam("appid", wechatAppId)
-                    .queryParam("secret", wechatSecret)
-                    .queryParam("js_code", code)
-                    .queryParam("grant_type", "authorization_code")
-                    .toUriString();
-            String response = new RestTemplate().getForObject(url, String.class);
-            JsonNode json = objectMapper.readTree(response);
-            if (json.has("errcode") && json.get("errcode").asInt() != 0) {
-                throw new ServerException("WECHAT_LOGIN_ERROR", json.path("errmsg").asText("微信登录失败"));
-            }
-            String openid = json.path("openid").asText("");
-            if (openid.isBlank()) {
-                throw new ServerException("WECHAT_LOGIN_ERROR", "微信登录失败");
-            }
-            return openid;
-        } catch (ServerException e) {
-            throw e;
+            response = new RestTemplate().getForObject(url, String.class);
         } catch (Exception e) {
+            throw new ServerException("WECHAT_NETWORK_ERROR", "微信接口网络异常，请稍后重试");
+        }
+        if (response == null || response.isBlank()) {
+            throw new ServerException("WECHAT_NETWORK_ERROR", "微信接口无响应");
+        }
+        JsonNode json;
+        try {
+            json = objectMapper.readTree(response);
+        } catch (Exception e) {
+            throw new ServerException("WECHAT_LOGIN_ERROR", "微信登录响应解析失败");
+        }
+        if (json.has("errcode") && json.get("errcode").asInt() != 0) {
+            int errcode = json.get("errcode").asInt();
+            String errmsg = json.path("errmsg").asText("微信登录失败");
+            // 40029=code无效, 40163=code已被使用, 40003/40013=appid错误等，均属于登录凭证问题
+            throw new ServerException("WECHAT_LOGIN_ERROR",
+                    "微信登录失败(" + errcode + ")" + (errmsg.isBlank() ? "" : ": " + errmsg));
+        }
+        String openid = json.path("openid").asText("");
+        if (openid.isBlank()) {
             throw new ServerException("WECHAT_LOGIN_ERROR", "微信登录失败");
         }
+        return openid;
     }
 
     public ApiResponse getListAll() {
@@ -158,6 +163,18 @@ public class UserService {
     }
 
     public void add(User user) {
+        if (user.getIsAdmin() == null) {
+            user.setIsAdmin(0);
+        }
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            user.setPassword("123456");
+        }
+        if (user.getRole() == null || user.getRole().isBlank()) {
+            user.setRole(user.getIsAdmin() == 1 ? "admin" : "user");
+        }
+        if (user.getChannel() == null || user.getChannel().isBlank()) {
+            user.setChannel("admin");
+        }
         userMapper.add(user);
     }
 

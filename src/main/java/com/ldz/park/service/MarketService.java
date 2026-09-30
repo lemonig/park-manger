@@ -131,15 +131,19 @@ public class MarketService {
     }
 
     /**
-     * 审核（后台专用）：修改 status 与审核时间。
+     * 审核（后台专用）：修改 status、审核时间与驳回原因。
+     * 拒绝（status=2）时 remark 必填。
      */
     @Transactional(rollbackFor = Exception.class)
-    public void audit(Long id, Integer status) {
+    public void audit(Long id, Integer status, String remark) {
         if (id == null) {
             throw new IllegalArgumentException("ID不能为空");
         }
         if (status == null || (status != 1 && status != 2)) {
             throw new IllegalArgumentException("审核状态非法（1=通过，2=拒绝）");
+        }
+        if (status == 2 && (remark == null || remark.isBlank())) {
+            throw new IllegalArgumentException("驳回时必须填写驳回原因");
         }
         Market existing = marketMapper.getDetailById(id);
         if (existing == null) {
@@ -150,6 +154,9 @@ public class MarketService {
         patch.setStatus(status);
         if (status == 1) {
             patch.setAuditTime(java.time.LocalDateTime.now());
+        }
+        if (status == 2) {
+            patch.setAuditRemark(remark.trim());
         }
         marketMapper.update(patch);
     }

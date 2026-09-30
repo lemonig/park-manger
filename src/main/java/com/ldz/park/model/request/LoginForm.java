@@ -30,9 +30,6 @@ public class LoginForm extends AbstractRequest {
     @Schema(description = "已废弃，服务端不再读取（保留字段以兼容旧客户端）", deprecated = true)
     private String wxUserId;
 
-    @Schema(description = "手机号（可选，小程序静默登录时若首次建号可回填，或用于按手机号回查已有用户并绑定 openid）", example = "18296325871")
-    private String mobile;
-
     @Schema(description = "旧 token（可选，小程序静默登录/续期时携带，用于将旧 jti 加入黑名单，避免多 token 并存）")
     private String token;
 }

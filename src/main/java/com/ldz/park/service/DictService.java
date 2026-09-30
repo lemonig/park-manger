@@ -1,5 +1,7 @@
 package com.ldz.park.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ldz.park.dao.DictItemMapper;
 import com.ldz.park.dao.DictTypeMapper;
 import com.ldz.park.model.DictItem;
@@ -20,6 +22,13 @@ public class DictService {
 
     public List<DictType> listTypes() {
         return dictTypeMapper.list();
+    }
+
+    public PageInfo<DictType> listTypes(int pageNum, int pageSize) {
+        pageNum = Math.max(pageNum, 1);
+        pageSize = Math.max(pageSize, 1);
+        PageHelper.startPage(pageNum, pageSize);
+        return new PageInfo<>(dictTypeMapper.list());
     }
 
     public DictType typeDetail(Long id) {
@@ -49,6 +58,13 @@ public class DictService {
 
     public List<DictItem> listItemsByTypeCode(String typeCode) {
         return dictItemMapper.list(typeCode);
+    }
+
+    public PageInfo<DictItem> listItemsByTypeCode(String typeCode, int pageNum, int pageSize) {
+        pageNum = Math.max(pageNum, 1);
+        pageSize = Math.max(pageSize, 1);
+        PageHelper.startPage(pageNum, pageSize);
+        return new PageInfo<>(dictItemMapper.list(typeCode));
     }
 
     public DictItem itemDetail(Long id) {

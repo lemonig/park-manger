@@ -23,6 +23,8 @@ public class InterceptorConfig implements  WebMvcConfigurer  {
                         // 新版认证白名单
                         "/api/wechat/auth/mini-login",
                         "/api/admin/auth/login",
+                        // 小程序车位列表无需鉴权
+                        "/api/wechat/market/list",
                         // 兼容旧接口（迁移期）
                         "/api/login",
                         "/api/wx-login",

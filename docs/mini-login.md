@@ -58,7 +58,6 @@
 {
   "code": "<wx.login 返回的 code>",
   "token": "<可选，旧 token，用于将旧 jti 拉黑>",
-  "mobile": "<可选，首次建号时回填>",
   "name": "<可选，首次建号时的昵称，默认为 '微信用户'>"
 }
 ```
@@ -87,7 +86,8 @@
 | code | 场景 |
 |---|---|
 | `WECHAT_CONFIG_ERROR` | 后端未注入 AppID / Secret |
-| `WECHAT_LOGIN_ERROR`  | jscode2session 调用失败 / openid 为空 / code 过期或无效 |
+| `WECHAT_NETWORK_ERROR` | 微信 jscode2session 接口网络异常 / 无响应 |
+| `WECHAT_LOGIN_ERROR`  | jscode2session 返回 errcode 非 0（如 40029 code 无效、40163 code 已使用）/ 响应解析失败 / openid 为空 |
 
 ### 2. 兼容旧接口
 
@@ -105,11 +105,14 @@
 
 ## 四、Token 与 Session 策略
 
+> 本项目为**纯 JWT 无状态方案，不依赖 Redis**。黑名单使用进程内内存实现，
+> 应用重启后黑名单清空（已登出/被顶的 token 在自身 `exp` 到期前可重新使用，对个人小程序可接受）。
+
 - 通道：`mini`（对应 `JwtUtil.CHANNEL_MINI`）
 - 有效期：由 `jwt.mini.ttl` 决定，默认 `2592000` 秒（30 天）
-- 存储：Redis key `auth:token:mini:<userId>` 保存当前有效 jti
-- **单设备互踢**：同一用户再次登录会顶掉上一次的 token；老 token 后续请求会被 `UserSecurityInterceptor` 拒绝
-- 黑名单：`auth:blacklist:<jti>`，用于主动登出、被顶下线、旧 token 拉黑
+- **单设备互踢**：同一用户再次登录会签发新 token 并把旧 jti 拉黑；老 token 后续请求会被 `UserSecurityInterceptor` 拒绝
+- 黑名单：`AuthTokenService` 内存 `ConcurrentHashMap<jti, 过期时间>`，用于主动登出、被顶下线、旧 token 拉黑
+- 强制下线：`AuthTokenService.forceLogout(userId, channel, ttl)` 定位该用户当前 jti 并拉黑
 
 ---
 
@@ -196,7 +199,7 @@ function apiRequest(options) {
 - `wxUserId`：已标 `@Deprecated`，服务端不再读取
 - `account` / `password`：账号密码登录使用，静默登录忽略
 
-小程序端建议只发送 `code`（首次建号可选带 `name` / `mobile`）。
+小程序端建议只发送 `code`（首次建号可选带 `name`）。
 
 ---
 
@@ -210,6 +213,6 @@ curl -X POST http://localhost:3429/api/oauth/mini/login \
   -d '{"code":"<小程序调 wx.login 拿到的真实 code>"}'
 ```
 
-预期：返回 `{ code: 200, data: { token, ... } }`；Redis 中 `auth:token:mini:<userId>` 会写入 jti。
+预期：返回 `{ code: 200, data: { token, ... } }`；带旧 token 登录时旧 jti 会进入内存黑名单。
 
 无真实 code 时可先验证配置：如果响应是 `WECHAT_LOGIN_ERROR` 而非 `WECHAT_CONFIG_ERROR`，说明 AppID/Secret 已生效。

@@ -15,6 +15,8 @@
         <result column="specs" jdbcType="VARCHAR" property="specs"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="audit_time" jdbcType="TIMESTAMP" property="auditTime"/>
+        <result column="audit_remark" jdbcType="VARCHAR" property="auditRemark"/>
         <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
         <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify"/>
         <!-- 预留字段 -->
@@ -66,6 +68,8 @@
             <if test="community != null">community = #{community},</if>
             <if test="buildings != null">buildings = #{buildings},</if>
             <if test="status != null">status = #{status},</if>
+            <if test="auditTime != null">audit_time = #{auditTime},</if>
+            <if test="auditRemark != null">audit_remark = #{auditRemark},</if>
             gmt_modify = NOW()
         </set>
         WHERE id = #{id}

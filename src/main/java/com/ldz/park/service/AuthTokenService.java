@@ -3,36 +3,48 @@ package com.ldz.park.service;
 import com.ldz.park.model.User;
 import com.ldz.park.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 处理小程序/后台 JWT 的签发、续期、黑名单与单点登录控制。
+ * 处理小程序/后台 JWT 的签发、续期与黑名单。
+ * <p>
+ * 纯 JWT 无状态方案，不依赖 Redis：
+ * <ul>
+ *   <li>黑名单使用进程内内存 {@link ConcurrentHashMap}，key 为 token 的 jti，value 为过期时间戳(ms)；</li>
+ *   <li>单点互踢通过「新登录签发新 token 并把旧 jti 拉黑」实现；</li>
+ *   <li>强制下线通过「用户+channel → 当前 jti」内存映射定位并拉黑实现；</li>
+ *   <li>内存黑名单在应用重启后会清空，已登出/被顶的 token 在自身 exp 到期前可重新使用，对个人小程序可接受。</li>
+ * </ul>
  */
 @Service
 public class AuthTokenService {
 
     private static final String KEY_MINI_TOKEN_PREFIX = "auth:token:mini:";
     private static final String KEY_ADMIN_TOKEN_PREFIX = "auth:token:admin:";
-    private static final String KEY_BLACKLIST_PREFIX = "auth:blacklist:";
+
+    /**
+     * jti → 过期时间戳(ms) 的内存黑名单。
+     */
+    private final ConcurrentHashMap<String, Long> jtiBlacklist = new ConcurrentHashMap<>();
+
+    /**
+     * 用户+channel → 当前有效 jti，用于强制下线时定位并拉黑。
+     */
+    private final ConcurrentHashMap<String, String> activeJtiByUser = new ConcurrentHashMap<>();
 
     @Autowired
     private JwtUtil jwtUtil;
 
-    @Autowired(required = false)
-    private StringRedisTemplate redisTemplate;
-
     /**
-     * 为小程序用户签发新 token，并把当前 jti 记录到 Redis 用于单点登录。
+     * 为小程序用户签发新 token，并记录该用户当前 jti，便于强制下线/单点互踢。
      */
     public String issueMiniToken(User user) {
         String jti = UUID.randomUUID().toString();
-        String token = jwtUtil.generateMiniToken(user, jti);
-        recordActiveJti(KEY_MINI_TOKEN_PREFIX + user.getId(), jti, jwtUtil.getMiniTtl());
-        return token;
+        recordActiveJti(user.getId(), JwtUtil.CHANNEL_MINI, jti);
+        return jwtUtil.generateMiniToken(user, jti);
     }
 
     /**
@@ -40,89 +52,57 @@ public class AuthTokenService {
      */
     public String issueAdminToken(User user) {
         String jti = UUID.randomUUID().toString();
-        String token = jwtUtil.generateToken(user, JwtUtil.CHANNEL_ADMIN, 86400L, jti);
-        recordActiveJti(KEY_ADMIN_TOKEN_PREFIX + user.getId(), jti, 86400L);
-        return token;
+        recordActiveJti(user.getId(), JwtUtil.CHANNEL_ADMIN, jti);
+        return jwtUtil.generateToken(user, JwtUtil.CHANNEL_ADMIN, 86400L, jti);
     }
 
-    private void recordActiveJti(String key, String jti, long ttlSeconds) {
-        if (redisTemplate == null) {
+    private void recordActiveJti(Integer userId, String channel, String jti) {
+        if (userId == null) {
             return;
         }
-        try {
-            redisTemplate.opsForValue().set(key, jti, ttlSeconds, TimeUnit.SECONDS);
-        } catch (Exception ignored) {
-        }
-    }
-
-    /**
-     * 判断 jti 是否为该用户在指定 channel 下的当前有效 token。
-     * Redis 不可用或未记录时默认放行（fail-open），避免影响业务。
-     */
-    public boolean isCurrentToken(Integer userId, String channel, String jti) {
-        if (redisTemplate == null || jti == null) {
-            return true;
-        }
-        try {
-            String key = keyForChannel(channel) + userId;
-            String current = redisTemplate.opsForValue().get(key);
-            if (current == null) {
-                return true;
+        String key = keyForChannel(channel) + userId;
+        String oldJti = activeJtiByUser.put(key, jti);
+        if (oldJti != null && !oldJti.equals(jti)) {
+            // 同一用户新登录，作废旧 token 的 jti（剩余时长由调用方另行拉黑时也可指定）
+            Long oldExpire = jtiBlacklist.get(oldJti);
+            if (oldExpire == null) {
+                // 未知过期时间时按 mini 通道默认 TTL 拉黑，避免旧 token 长期有效
+                jtiBlacklist.put(oldJti, System.currentTimeMillis() + jwtUtil.getMiniTtl() * 1000L);
             }
-            return current.equals(jti);
-        } catch (Exception e) {
-            return true;
         }
     }
 
     /**
-     * 判断 token 是否已加入黑名单。
+     * 判断 token 的 jti 是否在内存黑名单中。
      */
     public boolean isBlacklisted(String jti) {
-        if (redisTemplate == null || jti == null) {
+        if (jti == null) {
             return false;
         }
-        try {
-            Boolean has = redisTemplate.hasKey(KEY_BLACKLIST_PREFIX + jti);
-            return Boolean.TRUE.equals(has);
-        } catch (Exception e) {
+        Long expireAt = jtiBlacklist.get(jti);
+        if (expireAt == null) {
             return false;
         }
+        if (expireAt <= System.currentTimeMillis()) {
+            jtiBlacklist.remove(jti);
+            return false;
+        }
+        return true;
     }
 
     /**
-     * 主动登出：把 jti 写入黑名单直到原过期时间。
+     * 主动登出：把 jti 写入黑名单直到原 token 过期时间。
      */
     public void revokeJti(String jti, long remainingSeconds) {
-        if (redisTemplate == null || jti == null || remainingSeconds <= 0) {
+        if (jti == null || remainingSeconds <= 0) {
             return;
         }
-        try {
-            redisTemplate.opsForValue().set(KEY_BLACKLIST_PREFIX + jti, "1", remainingSeconds, TimeUnit.SECONDS);
-        } catch (Exception ignored) {
-        }
+        long expireAt = System.currentTimeMillis() + remainingSeconds * 1000L;
+        jtiBlacklist.put(jti, expireAt);
     }
 
     /**
-     * 强制下线某个用户：拉黑该 channel 下当前 jti，并清理记录。
-     */
-    public void forceLogout(Integer userId, String channel, long fallbackTtl) {
-        if (redisTemplate == null) {
-            return;
-        }
-        try {
-            String key = keyForChannel(channel) + userId;
-            String jti = redisTemplate.opsForValue().get(key);
-            if (jti != null) {
-                revokeJti(jti, fallbackTtl);
-                redisTemplate.delete(key);
-            }
-        } catch (Exception ignored) {
-        }
-    }
-
-    /**
-     * 登录时如有旧 token 且仍有效，把旧 jti 拉黑，避免并存。
+     * 登录时如有旧 token 且仍有效，把旧 jti 拉黑，避免多 token 并存。
      */
     public void revokeIfPresent(String oldToken) {
         if (oldToken == null || oldToken.isBlank()) {
@@ -136,6 +116,28 @@ public class AuthTokenService {
             }
         } catch (Exception ignored) {
         }
+    }
+
+    /**
+     * 强制下线某用户指定通道：定位其当前 jti 并拉黑。
+     */
+    public void forceLogout(Integer userId, String channel, long fallbackTtl) {
+        if (userId == null) {
+            return;
+        }
+        String key = keyForChannel(channel) + userId;
+        String jti = activeJtiByUser.remove(key);
+        if (jti != null) {
+            revokeJti(jti, fallbackTtl);
+        }
+    }
+
+    /**
+     * 清理已过期的黑名单记录（可选，防内存增长；由调用方按需触发）。
+     */
+    public void purgeExpired() {
+        long now = System.currentTimeMillis();
+        jtiBlacklist.entrySet().removeIf(e -> e.getValue() <= now);
     }
 
     private String keyForChannel(String channel) {

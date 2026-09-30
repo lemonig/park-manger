@@ -1,5 +1,6 @@
 package com.ldz.park.web.admin;
 
+import com.github.pagehelper.PageInfo;
 import com.ldz.park.model.DictItem;
 import com.ldz.park.model.DictType;
 import com.ldz.park.model.meta.ApiResponse;
@@ -31,8 +32,11 @@ public class AdminDictController {
 
     @Operation(summary = "字典类型列表")
     @GetMapping("/types")
-    public ApiResponse<List<DictType>> listTypes() {
-        return ApiResponse.success(dictService.listTypes());
+    public ApiResponse<List<DictType>> listTypes(
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize) {
+        PageInfo<DictType> pageInfo = dictService.listTypes(pageNum, pageSize);
+        return ApiResponse.successWithPage(pageInfo.getList(), pageInfo);
     }
 
     @Operation(summary = "字典类型详情")
@@ -67,8 +71,12 @@ public class AdminDictController {
 
     @Operation(summary = "字典项列表")
     @GetMapping("/items")
-    public ApiResponse<List<DictItem>> listItems(@RequestParam(required = false) String typeCode) {
-        return ApiResponse.success(dictService.listItemsByTypeCode(typeCode));
+    public ApiResponse<List<DictItem>> listItems(
+            @RequestParam(required = false) String typeCode,
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize) {
+        PageInfo<DictItem> pageInfo = dictService.listItemsByTypeCode(typeCode, pageNum, pageSize);
+        return ApiResponse.successWithPage(pageInfo.getList(), pageInfo);
     }
 
     @Operation(summary = "字典项详情")

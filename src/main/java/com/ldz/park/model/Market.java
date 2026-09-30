@@ -91,6 +91,11 @@ public class Market {
     private LocalDateTime auditTime;
 
     /**
+     * 审核驳回原因（审核拒绝时填写）
+     */
+    private String auditRemark;
+
+    /**
      * 城市（预留）
      */
     private String city;

@@ -83,13 +83,13 @@ public class AdminMarketController {
         return ApiResponse.success();
     }
 
-    @Operation(summary = "审核车位（1=通过，2=拒绝）")
+    @Operation(summary = "审核车位（1=通过，2=拒绝，拒绝时 remark 必填）")
     @PostMapping("/{id}/audit")
     public ApiResponse<Void> audit(@PathVariable Long id, @RequestBody AuditForm form) {
         if (form == null || form.getStatus() == null) {
             return ApiResponse.badRequest("审核状态不能为空");
         }
-        marketService.audit(id, form.getStatus());
+        marketService.audit(id, form.getStatus(), form.getRemark());
         return ApiResponse.ok();
     }
 

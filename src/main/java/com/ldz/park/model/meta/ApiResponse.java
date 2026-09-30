@@ -22,7 +22,7 @@ import java.util.Map;
  * 
  * <pre>
  * {
- *   "code": 0,           // 响应码：0=成功，其他=业务错误
+ *   "code": 200,         // 响应码：200=成功，其他=业务错误
  *   "message": "",        // 响应消息
  *   "data": {...},        // 业务数据
  *   "page": {...},        // 分页信息（列表查询时）
@@ -33,7 +33,7 @@ import java.util.Map;
  * <p>
  * 设计原则：
  * 1. 使用泛型 <T> 支持任意类型数据返回，提升类型安全
- * 2. 标准 HTTP-like 状态码（0=成功，400+=客户端错误，500+=服务端错误）
+ * 2. 标准 HTTP-like 状态码（200=成功，400+=客户端错误，500+=服务端错误）
  * 3. 使用 @JsonInclude(NON_NULL) 避免序列化 null 字段，减少响应体积
  * 4. 提供丰富的静态工厂方法，调用更便捷
  * 5. 支持 Builder 模式，构建更灵活
@@ -50,13 +50,13 @@ public class ApiResponse<T> implements Serializable {
 
     /**
      * 响应码
-     * 0 = 成功
+     * 200 = 成功（与 HTTP 2xx 对齐）
      * 1-399 = 业务错误
      * 400-499 = 客户端错误
      * 500+ = 服务端错误
      */
     @Builder.Default
-    private Integer code = 0;
+    private Integer code = 200;
 
     @Builder.Default
     private Boolean success = true;
