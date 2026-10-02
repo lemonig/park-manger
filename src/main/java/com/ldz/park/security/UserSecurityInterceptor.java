@@ -128,6 +128,7 @@ public class UserSecurityInterceptor implements HandlerInterceptor {
         response.setContentType("application/json;charset=UTF-8");
 
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
+        apiErrorResponse.setCode(ErrorCode.UNAUTHENTICATED.getValue());
         apiErrorResponse.setError(ErrorCode.UNAUTHENTICATED.getCode());
         apiErrorResponse.setMessage(message);
         apiErrorResponse.setPath(request.getServletPath());

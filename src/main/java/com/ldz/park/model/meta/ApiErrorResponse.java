@@ -30,12 +30,15 @@ public class ApiErrorResponse extends ApiResponse implements Serializable {
     }
 
     public ApiErrorResponse(ServerException ex, HttpServletRequest request) {
+        // 业务错误码必须写入 code，避免沿用父类默认的 200 被客户端误判为成功
+        this.setCode(ErrorCode.numericValueOf(ex.getError()));
         this.error = ex.getError();
         this.message = ex.getMessage();
         this.path = request.getRequestURI();
     }
 
     public ApiErrorResponse(Exception ex, HttpServletRequest request) {
+        this.setCode(ErrorCode.API_ERROR.getValue());
         this.error = ErrorCode.API_ERROR.getCode();
         this.exception = ex.getClass().getSimpleName();
         this.message = ex.getMessage();

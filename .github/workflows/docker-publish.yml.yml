@@ -1,0 +1,51 @@
+name: Build and Push to ACR
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to ACR
+        run: |
+          echo "${{ secrets.ACR_PASSWORD }}" | \
+            docker login crpi-66pjm0oi7g763epj.cn-hangzhou.personal.cr.aliyuncs.com \
+            -u "${{ secrets.ACR_USERNAME }}" --password-stdin
+
+      - name: Build and push
+        run: |
+          IMAGE=crpi-66pjm0oi7g763epj.cn-hangzhou.personal.cr.aliyuncs.com/park_java/park-java
+          TAG=${{ github.sha }}
+
+          docker build -t $IMAGE:$TAG -t $IMAGE:latest .
+          docker push $IMAGE:$TAG
+          docker push $IMAGE:latest
+
+      - name: Deploy to JD Cloud
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            IMAGE=crpi-66pjm0oi7g763epj.cn-hangzhou.personal.cr.aliyuncs.com/park_java/park-java
+            TAG=latest
+
+            docker login crpi-66pjm0oi7g763epj.cn-hangzhou.personal.cr.aliyuncs.com -u "珠穆朗玛峰蹦迪" -p "yws8b!_7KzNVRRD"
+
+            docker pull $IMAGE:$TAG
+
+            docker stop park-java || true
+            docker rm park-java || true
+
+            docker run -d \
+              --name park-java \
+              --restart unless-stopped \
+              -p 8080:3429 \
+              $IMAGE:$TAG
+
+            docker image prune -f
