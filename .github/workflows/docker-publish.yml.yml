@@ -46,10 +46,14 @@ jobs:
             # nginx 代理的是宿主机 3429 端口，旧容器（手工部署）就叫 park-java
             docker rm -f park-java 2>/dev/null || true
 
+            # 日志持久化：logback 写 /app/logs，挂载到宿主机（容器内 spring 用户 uid=100）
+            mkdir -p /data/park/java-logs && chown -R 100:100 /data/park/java-logs
+
             docker run -d \
               --name park-java \
               --restart unless-stopped \
               -p 3429:3429 \
+              -v /data/park/java-logs:/app/logs \
               -e WECHAT_MINIAPP_APP_ID="${{ secrets.WECHAT_MINIAPP_APP_ID }}" \
               -e WECHAT_MINIAPP_SECRET="${{ secrets.WECHAT_MINIAPP_SECRET }}" \
               $IMAGE:$TAG

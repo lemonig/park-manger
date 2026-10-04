@@ -23,14 +23,14 @@ WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 RUN chown spring:spring app.jar
 
+# logback 以相对路径 logs/ 写日志（即 /app/logs），非 root 用户需要可写目录
+RUN mkdir -p /app/logs && chown -R spring:spring /app
+
 USER spring:spring
 
 # JVM 优化参数（适合 2GB 内存 VPS）
 ENV JAVA_OPTS="-Xms128m -Xmx512m -XX:+UseZGC -XX:+ZGenerational"
 
-EXPOSE 8080
-
-# 健康检查（可选，但推荐）
-HEALTHCHECK --interval=30s --timeout=3s CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+EXPOSE 3429
 
 ENTRYPOINT exec java $JAVA_OPTS -jar app.jar
