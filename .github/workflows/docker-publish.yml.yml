@@ -32,20 +32,24 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            set -e
             IMAGE=crpi-66pjm0oi7g763epj.cn-hangzhou.personal.cr.aliyuncs.com/park_java/park-java
             TAG=latest
 
-            docker login crpi-66pjm0oi7g763epj.cn-hangzhou.personal.cr.aliyuncs.com -u "珠穆朗玛峰蹦迪" -p "yws8b!_7KzNVRRD"
+            echo "${{ secrets.ACR_PASSWORD }}" | \
+              docker login crpi-66pjm0oi7g763epj.cn-hangzhou.personal.cr.aliyuncs.com \
+              -u "${{ secrets.ACR_USERNAME }}" --password-stdin
 
+            # 先拉取成功才动旧容器，避免部署失败导致服务中断
             docker pull $IMAGE:$TAG
 
-            docker stop park-java || true
-            docker rm park-java || true
+            # nginx 代理的是宿主机 3429 端口，旧容器（手工部署）就叫 park-java
+            docker rm -f park-java 2>/dev/null || true
 
             docker run -d \
               --name park-java \
               --restart unless-stopped \
-              -p 8080:3429 \
+              -p 3429:3429 \
               -e WECHAT_MINIAPP_APP_ID="${{ secrets.WECHAT_MINIAPP_APP_ID }}" \
               -e WECHAT_MINIAPP_SECRET="${{ secrets.WECHAT_MINIAPP_SECRET }}" \
               $IMAGE:$TAG
