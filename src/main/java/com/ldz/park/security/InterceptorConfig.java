@@ -32,6 +32,7 @@ public class InterceptorConfig implements  WebMvcConfigurer  {
                         "/api/register",
                         "/favicon.ico",
 
+
                         "/lib/**",
                         "/api/sso/**",
                         // swagger / openapi
