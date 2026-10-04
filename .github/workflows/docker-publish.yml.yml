@@ -46,6 +46,8 @@ jobs:
               --name park-java \
               --restart unless-stopped \
               -p 8080:3429 \
+              -e WECHAT_MINIAPP_APP_ID="${{ secrets.WECHAT_MINIAPP_APP_ID }}" \
+              -e WECHAT_MINIAPP_SECRET="${{ secrets.WECHAT_MINIAPP_SECRET }}" \
               $IMAGE:$TAG
 
             docker image prune -f
