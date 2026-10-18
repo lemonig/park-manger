@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ldz.park.dao.FeedbackMapper">
+
+    <!-- 基础结果映射（列名与属性驼峰映射一致） -->
+    <resultMap id="BaseResultMap" type="com.ldz.park.model.Feedback">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="contact" jdbcType="VARCHAR" property="contact"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="handle_remark" jdbcType="VARCHAR" property="handleRemark"/>
+        <result column="handle_by" jdbcType="INTEGER" property="handleBy"/>
+        <result column="handle_time" jdbcType="TIMESTAMP" property="handleTime"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify"/>
+        <!-- 联查 user 表的展示字段 -->
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_doorplate" jdbcType="VARCHAR" property="userDoorplate"/>
+        <result column="user_mobile" jdbcType="VARCHAR" property="userMobile"/>
+    </resultMap>
+
+    <!-- 后台列表：联查提交人信息 + 动态条件（支持分页） -->
+    <select id="list" resultMap="BaseResultMap" parameterType="com.ldz.park.model.Feedback">
+        SELECT f.id, f.code, f.user_id, f.type, f.content, f.contact, f.status,
+               f.handle_remark, f.handle_by, f.handle_time, f.gmt_create, f.gmt_modify,
+               u.name AS user_name, u.doorplate AS user_doorplate, u.mobile AS user_mobile
+        FROM feedback f
+        LEFT JOIN user u ON f.user_id = u.id
+        <where>
+            <if test="status != null">
+                AND f.status = #{status}
+            </if>
+            <if test="type != null and type != ''">
+                AND f.type = #{type}
+            </if>
+            <if test="userId != null">
+                AND f.user_id = #{userId}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (f.content LIKE CONCAT('%', #{keyword}, '%')
+                  OR f.contact LIKE CONCAT('%', #{keyword}, '%')
+                  OR u.name LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND f.gmt_create &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND f.gmt_create &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY f.gmt_create DESC
+    </select>
+
+    <!-- 新增 -->
+    <insert id="add" parameterType="com.ldz.park.model.Feedback" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO feedback
+        (code, user_id, type, content, contact, status, gmt_create, gmt_modify)
+        VALUES
+        (#{code}, #{userId}, #{type}, #{content}, #{contact}, #{status}, NOW(), NOW())
+    </insert>
+
+    <!-- 详情查询 -->
+    <select id="getDetailById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT f.id, f.code, f.user_id, f.type, f.content, f.contact, f.status,
+               f.handle_remark, f.handle_by, f.handle_time, f.gmt_create, f.gmt_modify,
+               u.name AS user_name, u.doorplate AS user_doorplate, u.mobile AS user_mobile
+        FROM feedback f
+        LEFT JOIN user u ON f.user_id = u.id
+        WHERE f.id = #{id}
+    </select>
+
+    <!-- 标记已处理（仅待处理状态可处理，幂等由影响行数判断） -->
+    <update id="handle" parameterType="com.ldz.park.model.Feedback">
+        UPDATE feedback
+        SET status = 1,
+            handle_remark = #{handleRemark},
+            handle_by = #{handleBy},
+            handle_time = NOW(),
+            gmt_modify = NOW()
+        WHERE id = #{id} AND status = 0
+    </update>
+
+    <!-- 频控：用户最近 N 小时提交数 -->
+    <select id="countRecentByUser" resultType="int">
+        SELECT COUNT(*) FROM feedback
+        WHERE user_id = #{userId}
+          AND gmt_create &gt;= DATE_SUB(NOW(), INTERVAL #{hours} HOUR)
+    </select>
+
+    <!-- 图片 id 存在性校验 -->
+    <select id="countExistingImages" resultType="int">
+        SELECT COUNT(*) FROM images
+        WHERE id IN
+        <foreach collection="imageIds" item="imageId" open="(" separator="," close=")">
+            #{imageId}
+        </foreach>
+    </select>
+
+    <!-- 批量插入图片关联 -->
+    <insert id="insertImagesBatch">
+        INSERT INTO feedback_images (feedback_code, image_id, create_by, create_time)
+        VALUES
+        <foreach collection="imageIds" item="imageId" separator=",">
+            (#{feedbackCode}, #{imageId}, #{userId}, NOW())
+        </foreach>
+    </insert>
+
+    <!-- 批量查询图片 -->
+    <select id="selectImagesByFeedbackCodes" resultType="com.ldz.park.model.vo.market.SimpleImage">
+        SELECT fi.feedback_code AS marketCode, fi.image_id AS id, f.url
+        FROM feedback_images fi
+        LEFT JOIN images f ON fi.image_id = f.id
+        WHERE fi.feedback_code IN
+        <foreach collection="codes" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+        ORDER BY fi.create_time ASC
+    </select>
+
+    <!-- 单条查询图片 -->
+    <select id="selectImagesByFeedbackCode" resultType="com.ldz.park.model.vo.market.SimpleImage">
+        SELECT fi.feedback_code AS marketCode, fi.image_id AS id, f.url
+        FROM feedback_images fi
+        LEFT JOIN images f ON fi.image_id = f.id
+        WHERE fi.feedback_code = #{feedbackCode}
+        ORDER BY fi.create_time ASC
+    </select>
+
+</mapper>
