@@ -33,3 +33,13 @@ build/
 ### VS Code ###
 .vscode/
 logs/
+
+### 密钥与本地配置：严禁提交 ###
+.env
+.env.*
+application-local.properties
+application-*-local.properties
+*.local.properties
+
+### macOS ###
+.DS_Store

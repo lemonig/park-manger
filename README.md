@@ -29,9 +29,23 @@
 - **MySQL 5.7+**
 - **Maven 3.6+**
 
-### 2. 配置数据库
-在 `application.properties` 文件中配置数据库连接信息：
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/parking_management
-spring.datasource.username=root
-spring.datasource.password=root
+### 2. 配置环境变量
+所有密钥与真实连接串一律通过环境变量注入，仓库内不保存任何明文密钥（历史版本曾泄露并公开，已全部移除）：
+
+| 环境变量 | 用途 | 说明 |
+| --- | --- | --- |
+| `MYSQL_URL` | JDBC 连接串 | prod 必填；dev 缺省时连本机 `127.0.0.1:3306/park` |
+| `MYSQL_USER` / `MYSQL_PASSWORD` | 数据库账号密码 | prod 必填 |
+| `JWT_SECRET` | JWT 签名密钥 | prod 必填，不少于 32 字节；更换后所有已发 token 失效 |
+| `COS_SECRET_ID` / `COS_SECRET_KEY` | 腾讯云 COS 密钥 | 使用文件上传时必填 |
+| `COS_BUCKET` / `COS_REGION` / `COS_BASE_URL` | COS 桶配置 | 有默认值，可覆盖 |
+| `WECHAT_MINIAPP_APP_ID` / `WECHAT_MINIAPP_SECRET` | 微信小程序登录 | 使用小程序登录时必填 |
+
+prod profile 对必填项不提供任何默认值，缺失时应用会在启动阶段直接失败；dev profile 缺省指向本机。本地开发示例（勿写入仓库）：
+
+```bash
+export MYSQL_PASSWORD='your-local-password'
+export JWT_SECRET="$(openssl rand -base64 48)"
+bash ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+```
+

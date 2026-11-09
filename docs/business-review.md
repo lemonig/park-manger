@@ -198,8 +198,8 @@ return SimpleUser(user, token)
 
 ## 八、当前阻塞项（审查时重点关注的未决事项）
 
-1. **数据库不可达**：dev 库 `mysql-internet-cn-north-1-336723bd277f4c12.rds.jdcloud.com:3306`（116.196.70.97）端口连接超时。
-   京东云 RDS 可能未对当前 Mac 的公网 IP 开放白名单，或该实例已不可用。**需用户确认可连的 DB 地址/账号**，改 `application-dev.properties` 后启动联调。
+1. **数据库不可达**：dev 库（京东云 RDS，连接串含真实域名，已从仓库移除、改由 `MYSQL_URL` 环境变量注入）端口连接超时。
+   京东云 RDS 可能未对当前 Mac 的公网 IP 开放白名单，或该实例已不可用。**需用户确认可连的 DB 地址/账号**，设置 `MYSQL_URL`/`MYSQL_USER`/`MYSQL_PASSWORD` 环境变量后启动联调。
 2. **AppID/AppSecret 未提供**：登录接口在无这两个环境变量时必然返回 `WECHAT_CONFIG_ERROR`。需用户提供后注入启动。
 3. **`user` 表结构未核实**：DB 可达前无法确认 `openid`/`channel` 字段是否存在（登录建号依赖）。如缺字段需补 ALTER。
 

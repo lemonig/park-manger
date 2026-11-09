@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "tencent.cos")
 @Data
 public class CosConfig {
-    private String secretId = "AKID86sQksnUxEH7j7IFyTlpfHfpmXFjz2rf";
-    private String secretKey = "hBRTItGPRGuNdiZCbnlV4QZUBf0GbIp9";
+    private String secretId;
+    private String secretKey;
     private String region;
     private String bucketName;
     private String prefix;
