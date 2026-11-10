@@ -40,6 +40,15 @@ jobs:
               docker login crpi-66pjm0oi7g763epj.cn-hangzhou.personal.cr.aliyuncs.com \
               -u "${{ secrets.ACR_USERNAME }}" --password-stdin
 
+            # 数据库/JWT/COS/微信等敏感配置全部在服务器本地 env 文件（root:600），
+            # 不进 GitHub、不进镜像。文件内需含：
+            #   MYSQL_URL / MYSQL_USER / MYSQL_PASSWORD / JWT_SECRET
+            #   COS_SECRET_ID / COS_SECRET_KEY
+            #   WECHAT_MINIAPP_APP_ID / WECHAT_MINIAPP_SECRET
+            # 缺文件必须在删掉旧容器之前失败，否则线上服务会被删掉却起不来新的。
+            ENV_FILE=/data/park/java.env
+            [ -f "$ENV_FILE" ] || { echo "missing $ENV_FILE" >&2; exit 1; }
+
             # 先拉取成功才动旧容器，避免部署失败导致服务中断
             docker pull $IMAGE:$TAG
 
@@ -54,8 +63,7 @@ jobs:
               --restart unless-stopped \
               -p 3429:3429 \
               -v /data/park/java-logs:/app/logs \
-              -e WECHAT_MINIAPP_APP_ID="${{ secrets.WECHAT_MINIAPP_APP_ID }}" \
-              -e WECHAT_MINIAPP_SECRET="${{ secrets.WECHAT_MINIAPP_SECRET }}" \
+              --env-file "$ENV_FILE" \
               $IMAGE:$TAG
 
             docker image prune -f
