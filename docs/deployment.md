@@ -31,7 +31,8 @@ git push → main (lemonig/park-manger)
 | --- | --- |
 | `/data/park/java.env` | **全部敏感配置,root:600**。缺此文件部署守卫直接失败(旧容器保留,服务不受影响) |
 | `/data/park/java-logs/` | 容器日志挂载点(logback 在容器内写 `/app/logs`,属主 uid 100) |
-| `/etc/nginx/sites-enabled/kolder.site` | `/api/`→127.0.0.1:3429(后端);`/`→127.0.0.1:3000(前端);`/note/`→127.0.0.1:8080(invest-notebook,另一个项目) |
+| `/etc/nginx/sites-enabled/kolder.site` | `/api/`→127.0.0.1:3429(后端);`/`→127.0.0.1:3000(前端);`/note/`→127.0.0.1:8080(invest-notebook,另一个项目)。**enabled 目录里严禁放 .bak 等备份文件**——nginx 会把里面所有文件当配置加载(曾导致 conflicting server name) |
+| 上传链路上限(2026-11-10 定) | 图片单文件 8MB。三级阈值:≤8MB 放行;>8MB 后端 Spring 拦(`MaxUploadSizeExceededException`→500);>10MB nginx 拦(413)。配置在两处:nginx `location /api/` 的 `client_max_body_size 10m`(曾漏配,吃默认 1MB)+ 基础 `application.properties` 的 `spring.servlet.multipart.max-file-size=8MB / max-request-size=10MB`(曾只配在 prod,而容器跑 dev 吃默认 1MB,导致小程序传图几乎必然失败) |
 | 服务器上手动跑的容器 | `park-java`(后端)、`park-nextjs`(前端)、`invest-notebook`(无关项目,勿动) |
 
 `java.env` 必需的 8 个变量:
