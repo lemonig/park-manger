@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class UserService {
@@ -57,6 +58,25 @@ public class UserService {
     }
 
     /**
+     * 默认昵称词库：常见 App 做法，注册时生成「拼音 + 4 位随机数」的默认昵称
+     * （如 feichi5823），替代「微信用户」这类无信息量的默认名。
+     */
+    private static final String[] DEFAULT_NAME_WORDS = {
+            "cheyou", "aiche", "feichi", "jifeng", "zhufeng", "zhuimeng",
+            "xingzhe", "kuaile", "ziyou", "yuanmeng", "lucheng", "fengxing",
+            "xingchen", "chenguang", "xingguang", "haiyang", "qingfeng", "baiyun",
+            "shanhe", "xingkong", "yuanwang", "lvtu", "fengfa", "qianjin",
+    };
+
+    /** 历史默认昵称，登录时检测到即一次性替换 */
+    private static final String LEGACY_DEFAULT_NAME = "微信用户";
+
+    private static String generateDefaultName() {
+        String word = DEFAULT_NAME_WORDS[ThreadLocalRandom.current().nextInt(DEFAULT_NAME_WORDS.length)];
+        return word + ThreadLocalRandom.current().nextInt(10000);
+    }
+
+    /**
      * 小程序登录/续期：通过 code 换 openid，查/建用户，返回带 token 的用户信息。
      * 若请求带旧 token，则先将旧 jti 拉黑，避免并存。
      * 注：个人小程序不采集手机号，仅基于 openid 建立用户。
@@ -82,7 +102,7 @@ public class UserService {
             user = new User();
             user.setAccount("wx_" + openid);
             user.setOpenid(openid);
-            user.setName(name == null || name.isBlank() ? "微信用户" : name);
+            user.setName(name == null || name.isBlank() ? generateDefaultName() : name);
             user.setDoorplate("");
             user.setPassword("123456");
             user.setIsAdmin(0);
@@ -92,6 +112,12 @@ public class UserService {
             if (user.getId() == null) {
                 user = userMapper.getUserByOpenid(openid);
             }
+        }
+
+        // 存量用户名迁移：历史默认名「微信用户」替换为拼音+随机数字，仅触发一次
+        if (user != null && (user.getName() == null || user.getName().isBlank() || LEGACY_DEFAULT_NAME.equals(user.getName()))) {
+            user.setName(generateDefaultName());
+            userMapper.update(user);
         }
 
         authTokenService.revokeIfPresent(loginForm.getToken());
