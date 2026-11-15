@@ -313,9 +313,10 @@ public class MarketService {
     }
 
     /**
-     * 批量填充图片（列表查询用，性能最优：1+1 查询 + groupingBy 分组）
+     * 批量填充图片（列表查询用，性能最优：1+1 查询 + groupingBy 分组）。
+     * 供本类与 FavoriteService（收藏列表）复用。
      */
-    private void batchFillImages(List<Market> list) {
+    public void batchFillImages(List<Market> list) {
         if (list == null || list.isEmpty()) {
             return;
         }

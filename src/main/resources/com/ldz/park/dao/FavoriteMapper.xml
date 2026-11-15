@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ldz.park.dao.FavoriteMapper">
+
+    <select id="listMarketsByUser" resultMap="com.ldz.park.dao.MarketMapper.BaseResultMap">
+        select m.*
+        from market_favorite f
+        join market m on f.market_id = m.id
+        where f.user_id = #{userId}
+          and m.status = 1
+        order by f.gmt_create desc
+    </select>
+
+    <select id="listIds" resultType="java.lang.Long">
+        select market_id
+        from market_favorite
+        where user_id = #{userId}
+        order by gmt_create desc
+    </select>
+
+    <insert id="insertIgnore">
+        insert ignore into market_favorite(user_id, market_id, gmt_create)
+        values (#{userId}, #{marketId}, now())
+    </insert>
+
+    <delete id="delete">
+        delete from market_favorite
+        where user_id = #{userId} and market_id = #{marketId}
+    </delete>
+
+</mapper>
