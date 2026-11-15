@@ -4,9 +4,18 @@ on:
   push:
     branches: [main]
 
+# 同一分支同时只允许一条部署流水线：新推送自动取消在途的旧 run，
+# 避免 CI 内 Maven 无缓存慢构建（曾达 78 分钟）悬挂时阻塞后续部署。
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    # 构建正常上限约 78 分钟（CI 内 mvnw 全量拉依赖）；超时视为悬挂自杀，
+    # 而不是无限占用 runner、永不部署。
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
