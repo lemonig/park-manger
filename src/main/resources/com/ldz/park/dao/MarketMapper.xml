@@ -19,10 +19,11 @@
         <result column="audit_remark" jdbcType="VARCHAR" property="auditRemark"/>
         <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
         <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify"/>
-        <!-- 预留字段 -->
+        <!-- 地址冗余字段：由服务端按 community_id 对应小区回写 -->
         <result column="city" jdbcType="VARCHAR" property="city"/>
         <result column="area" jdbcType="VARCHAR" property="area"/>
         <result column="community" jdbcType="VARCHAR" property="community"/>
+        <result column="community_id" jdbcType="BIGINT" property="communityId"/>
         <result column="buildings" jdbcType="VARCHAR" property="buildings"/>
     </resultMap>
 
@@ -39,17 +40,20 @@
             <if test="status != null">
                 AND status = #{status}
             </if>
+            <if test="communityId != null">
+                AND community_id = #{communityId}
+            </if>
             <!-- 可扩展更多条件，如价格区间、时间等 -->
         </where>
         ORDER BY gmt_create DESC
     </select>
 
-    <!-- 新增 -->
+    <!-- 新增（city/area/community 由服务端按 communityId 对应小区回写） -->
     <insert id="add" parameterType="com.ldz.park.model.Market" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         INSERT INTO market
-        (code, user_id, price, parking_no, description, type, position_desc, specs, phone, city, area, community, buildings, status, gmt_create, gmt_modify)
+        (code, user_id, price, parking_no, description, type, position_desc, specs, phone, city, area, community, community_id, buildings, status, gmt_create, gmt_modify)
         VALUES
-        (#{code}, #{userId}, #{price}, #{parkingNo}, #{description}, #{type}, #{positionDesc}, #{specs}, #{phone}, #{city}, #{area}, #{community}, #{buildings}, #{status}, NOW(), NOW())
+        (#{code}, #{userId}, #{price}, #{parkingNo}, #{description}, #{type}, #{positionDesc}, #{specs}, #{phone}, #{city}, #{area}, #{community}, #{communityId}, #{buildings}, #{status}, NOW(), NOW())
     </insert>
 
     <!-- 更新 -->
@@ -66,6 +70,7 @@
             <if test="city != null">city = #{city},</if>
             <if test="area != null">area = #{area},</if>
             <if test="community != null">community = #{community},</if>
+            <if test="communityId != null">community_id = #{communityId},</if>
             <if test="buildings != null">buildings = #{buildings},</if>
             <if test="status != null">status = #{status},</if>
             <if test="auditTime != null">audit_time = #{auditTime},</if>

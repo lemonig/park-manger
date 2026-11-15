@@ -3,6 +3,7 @@ package com.ldz.park.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ldz.park.dao.MarketMapper;
+import com.ldz.park.model.Community;
 import com.ldz.park.model.Market;
 import com.ldz.park.model.vo.market.SimpleImage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class MarketService {
 
     @Autowired
     private MarketMapper marketMapper;
+
+    @Autowired
+    private CommunityService communityService;
 
     /**
      * 查询列表（支持分页 + 条件查询，已填充图片）
@@ -180,6 +184,9 @@ public class MarketService {
             market.setStatus(0);
         }
 
+        // 标的地址以小区库为唯一来源：解析 communityId 并回写 city/area/community
+        applyCommunity(market);
+
         marketMapper.add(market);
         if (market.getImages() != null && !market.getImages().isEmpty()) {
             List<String> imageIds = market.getImages().stream()
@@ -210,6 +217,9 @@ public class MarketService {
 //        if (!existing.getUserId().equals(currentUserId)) {
 //            throw new IllegalArgumentException("无权限修改此车位信息");
 //        }
+
+        // 标的地址以小区库为唯一来源：解析 communityId 并回写 city/area/community
+        applyCommunity(market);
 
         int rows = marketMapper.update(market);
         if (rows == 0) {
@@ -268,6 +278,18 @@ public class MarketService {
         fillImages(market); // 单条填充
 
         return market;
+    }
+
+    /**
+     * 标的地址解析：communityId 必填，校验小区存在且启用，
+     * city/area/community 一律以小区库为准回写（客户端传值被覆盖，
+     * 填报人 GPS 不再参与地址生成）。
+     */
+    private void applyCommunity(Market market) {
+        Community community = communityService.requireEnabled(market.getCommunityId());
+        market.setCity(community.getCity());
+        market.setArea(community.getArea());
+        market.setCommunity(community.getName());
     }
 
     /**

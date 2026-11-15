@@ -35,7 +35,7 @@ git push → main (lemonig/park-manger)
 | 上传链路上限(2026-11-10 定) | 图片单文件 8MB。三级阈值:≤8MB 放行;>8MB 后端 Spring 拦(`MaxUploadSizeExceededException`→500);>10MB nginx 拦(413)。配置在两处:nginx `location /api/` 的 `client_max_body_size 10m`(曾漏配,吃默认 1MB)+ 基础 `application.properties` 的 `spring.servlet.multipart.max-file-size=8MB / max-request-size=10MB`(曾只配在 prod,而容器跑 dev 吃默认 1MB,导致小程序传图几乎必然失败) |
 | 服务器上手动跑的容器 | `park-java`(后端)、`park-nextjs`(前端)、`invest-notebook`(无关项目,勿动) |
 
-`java.env` 必需的 8 个变量:
+`java.env` 必需的 9 个变量:
 
 ```
 MYSQL_URL            JDBC 连接串(京东云 RDS)
@@ -43,6 +43,7 @@ MYSQL_USER / MYSQL_PASSWORD
 JWT_SECRET           HS256 签名密钥(≥32 字节;换值 = 全部用户重新登录)
 COS_SECRET_ID / COS_SECRET_KEY   腾讯云 COS
 WECHAT_MINIAPP_APP_ID / WECHAT_MINIAPP_SECRET
+TENCENT_MAP_KEY      腾讯位置服务 WebService API(小区库 POI 搜索代理;需在 LBS 控制台为该 key 开通 WebService API 并配置 IP 白名单)
 ```
 
 ⚠️ **轮换任何密钥后必须同步改 `java.env`**,然后 `docker restart park-java`(或重跑一次部署),否则容器重启后连不上数据库。

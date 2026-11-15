@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ldz.park.dao.CommunityMapper">
+
+    <resultMap id="BaseResultMap" type="com.ldz.park.model.Community">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="area" property="area" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="lat" property="lat" jdbcType="DECIMAL"/>
+        <result column="lng" property="lng" jdbcType="DECIMAL"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="list" resultMap="BaseResultMap">
+        select * from community
+        <where>
+            <if test="keyword != null and keyword != ''">
+                and name like concat('%', #{keyword}, '%')
+            </if>
+            <if test="city != null and city != ''">
+                and city = #{city}
+            </if>
+            <if test="area != null and area != ''">
+                and area = #{area}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by id asc
+    </select>
+
+    <select id="detail" resultMap="BaseResultMap">
+        select * from community where id = #{id}
+    </select>
+
+    <select id="getByNameAndCity" resultMap="BaseResultMap">
+        select * from community where name = #{name} and city = #{city} limit 1
+    </select>
+
+    <insert id="add" parameterType="com.ldz.park.model.Community" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into community(name, province, city, area, address, lat, lng, status, create_time, update_time)
+        values (#{name}, #{province}, #{city}, #{area}, #{address}, #{lat}, #{lng},
+                <choose>
+                    <when test="status != null">#{status}</when>
+                    <otherwise>1</otherwise>
+                </choose>,
+                now(), now())
+    </insert>
+
+    <update id="update" parameterType="com.ldz.park.model.Community">
+        update community
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="area != null">area = #{area},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="lat != null">lat = #{lat},</if>
+            <if test="lng != null">lng = #{lng},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = now()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from community where id = #{id}
+    </delete>
+
+    <select id="countMarketByCommunityId" resultType="int">
+        select count(*) from market where community_id = #{communityId}
+    </select>
+
+</mapper>

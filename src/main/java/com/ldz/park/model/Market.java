@@ -96,19 +96,24 @@ public class Market {
     private String auditRemark;
 
     /**
-     * 城市（预留）
+     * 城市（由选中小区回写，展示冗余字段，勿单独更新）
      */
     private String city;
 
     /**
-     * 区域（预留）
+     * 区域（由选中小区回写）
      */
     private String area;
 
     /**
-     * 小区（预留）
+     * 小区名（由选中小区回写）
      */
     private String community;
+
+    /**
+     * 小区字典ID（标的地址来源；city/area/community 由服务端按它回写）
+     */
+    private Long communityId;
 
     /**
      * 靠近楼栋（dict_item.value，逗号分隔）
